@@ -30,8 +30,8 @@ nnoremap <leader>p "+p
 vnoremap <leader>P "+P
 nnoremap <leader>P "+P
 " Move to next buffer
-map <leader>bn :bn<cr>
-map <leader>bp :bp<cr>
+noremap <silent> <leader>bn :bn<CR>
+noremap <silent> <leader>bp :bp<CR>
 
 let mapleader = ";"
 noremap <Space> i
@@ -45,7 +45,7 @@ if (has("termguicolors"))
 endif
 
 syntax enable
-colorscheme lucid 
+colorscheme purpura 
 
 " Lua init codes
 lua require('init')

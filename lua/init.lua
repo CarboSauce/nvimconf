@@ -1,3 +1,10 @@
+-- General configs
+default_conf = { noremap = true, silent = true };
+
+vim.keymap.set('n','<Leader>fmt', vim.lsp.buf.formatting,default_conf)
+vim.keymap.set('n','<Leader>def',vim.lsp.buf.definition,default_conf)
+vim.keymap.set('n','<Leader>rn',vim.lsp.buf.rename,default_conf)
+
 -- LUA LINE
 require('lualine').setup {
   options = {
@@ -100,8 +107,8 @@ cmp.setup {
 require'nvim-tree'.setup
 {
 	update_focused_file = {
-		update_cwd = true,
-		enable = true
+		update_cwd = false,
+		enable = false
 	},
 	renderer = {
 		indent_markers = {
@@ -130,6 +137,9 @@ let g:cmake_build_dir = ".cmakebuild"
 let g:cmake_compile_commands = 1 
 let g:cmake_project_generator = "Ninja"
 let g:make_arguments = "-j 8"
+nnoremap <leader>cc :CMake<CR>
+nnoremap <leader>cb :CMakeBuild<CR>
+nnoremap <leader>cr :CMakeRun<CR>
 ]])
 -- NVIM TABS
 local bufline = require 'bufferline'
@@ -142,13 +152,4 @@ bufline.setup {
 	icons = true,
 	icon_custom_colors = false,
 }
--- https://github.com/romgrk/barbar.nvim/blob/master/lua/bufferline/highlight.lua 
--- local fgVisible = hl.fg_or_default({'TabLineSel'},'#000000',255)
--- local bgVisible = hl.bg_or_default({'TabLineFill','Normal'},'none')
--- local default_hl = hl.get_default_setter()
--- default_hl('BufferInactive', bgVisible,fgVisible)
--- default_hl('BufferVisibleSign',    bgVisible, fbVisible)
--- default_hl('BufferVisibleTarget',  bgVisible, fbVisible, true)
--- default_hl('BufferVisible',        bgVisible, fbVisible)
--- default_hl('BufferVisibleIndex',   bgVisible, fbVisible)
--- default_hl('BufferVisibleMod',     bgVisible, fbVisible)
+

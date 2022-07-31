@@ -2,10 +2,10 @@ local use = require('packer').use
 require('packer').startup(function()
 	use 'wbthomason/packer.nvim'
 	use 'neovim/nvim-lspconfig'
-	use 'Rigellute/shades-of-purple.vim'
 	use 'cseelus/vim-colors-lucid'
 	use 'hrsh7th/nvim-cmp'
 	use 'hrsh7th/cmp-nvim-lsp'
+	use 'yassinebridi/vim-purpura' 
 	use 'saadparwaiz1/cmp_luasnip'
 	use 'L3MON4D3/LuaSnip'
 	use 'ilyachur/cmake4vim'	

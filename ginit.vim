@@ -5,9 +5,8 @@ set guifontwide='
 " Set Editor Font
 if exists(':GuiFont')
     " Use GuiFont! to ignore font errors
-    GuiFont Fira Code:h11
+    GuiFont	Modern DOS 8x14:h16
 endif
-
 " Disable GUI Tabline
 if exists(':GuiTabline')
     GuiTabline 0
