@@ -10,14 +10,14 @@ require('lualine').setup {
   options = {
     icons_enabled = true,
     theme = 'horizon',
-    component_separators = { left = '', right = ''},
-    section_separators = { left = '', right = ''},
+    component_separators = { left = '│', right = '│'},
+    section_separators = { left = '▌', right = '▐'},
     disabled_filetypes = {},
     always_divide_middle = true,
   },
   sections = {
     lualine_a = {'mode'},
-    lualine_b = {'branch', 'diff', 'diagnostics'},
+    lualine_b = {'diagnostics'},
     lualine_c = {'filename'},
     lualine_x = {'encoding', 'fileformat', 'filetype'},
     lualine_y = {'progress'},
@@ -33,6 +33,7 @@ require('lualine').setup {
   },
   tabline = {},
   extensions = {}
+
 }
 -- LSP STUFF
 local capabs = vim.lsp.protocol.make_client_capabilities()
@@ -40,10 +41,34 @@ capabs = require('cmp_nvim_lsp').update_capabilities(capabs)
 local lspconfig = require('lspconfig')
 
 -- CCLS CONFIG
-lspconfig.ccls.setup {
+if vim.fn.has('win32')
+then
+	local ccls_cache_dir = ""
+else
+	local ccls_cache_dir = "/tmp/ccls/"
+end
+
+local cxx_use_clangd = true
+
+if cxx_use_clangd then
+	lspconfig.clangd.setup {
+	init_options = {
+		cmd = {
+			"clangd","--compile-commands-dir=.cmakebuild",
+			"--background-index"
+		},
+	},
+	capabilities = capab,
+	root_dir = function()
+		return vim.fn.getcwd()
+	end
+	}
+else
+	print('Using ccls')
+	lspconfig.ccls.setup {
 	init_options = {
 		cache = {
-			directory = "/tmp/ccls/"
+			directory = ccls_cache_dir
 		},
 		compilationDatabaseDirectory = ".cmakebuild",
 		completion = {
@@ -57,7 +82,8 @@ lspconfig.ccls.setup {
 		return vim.fn.getcwd()
 	end,
 	capabilities = capabs
-}
+	}
+end
 
 -- SNIPPETS AND NVIM-CMP
 local luasnip = require 'luasnip'
@@ -106,8 +132,8 @@ cmp.setup {
 -- NVIM TREE
 require'nvim-tree'.setup
 {
+	update_cwd = true,
 	update_focused_file = {
-		update_cwd = false,
 		enable = false
 	},
 	renderer = {
@@ -152,4 +178,8 @@ bufline.setup {
 	icons = true,
 	icon_custom_colors = false,
 }
-
+require("toggleterm").setup{
+	float_opts = {
+		border = {"╔", "═" ,"╗", "║", "╝", "═", "╚", "║"}
+	}
+}

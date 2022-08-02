@@ -8,7 +8,10 @@ require('packer').startup(function()
 	use 'yassinebridi/vim-purpura' 
 	use 'saadparwaiz1/cmp_luasnip'
 	use 'L3MON4D3/LuaSnip'
-	use 'ilyachur/cmake4vim'	
+	use 'ilyachur/cmake4vim'
+	use {
+		'akinsho/toggleterm.nvim', tag = 'v2.*', opt = false
+	}
 	use {
 		'romgrk/barbar.nvim',
 		lock = true,
