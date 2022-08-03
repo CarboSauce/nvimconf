@@ -1,9 +1,10 @@
 -- General configs
-default_conf = { noremap = true, silent = true };
+local default_conf = { noremap = true, silent = true };
 
 vim.keymap.set('n','<Leader>fmt', vim.lsp.buf.formatting,default_conf)
 vim.keymap.set('n','<Leader>def',vim.lsp.buf.definition,default_conf)
 vim.keymap.set('n','<Leader>rn',vim.lsp.buf.rename,default_conf)
+
 
 -- LUA LINE
 require('lualine').setup {
@@ -43,28 +44,25 @@ local lspconfig = require('lspconfig')
 -- CCLS CONFIG
 if vim.fn.has('win32')
 then
-	local ccls_cache_dir = ""
+	ccls_cache_dir = ""
 else
-	local ccls_cache_dir = "/tmp/ccls/"
+	ccls_cache_dir = "/tmp/ccls/"
 end
 
-local cxx_use_clangd = true
-
-if cxx_use_clangd then
+local has_ccls = vim.fn.exepath('ccls')
+if has_ccls then
 	lspconfig.clangd.setup {
-	init_options = {
-		cmd = {
-			"clangd","--compile-commands-dir=.cmakebuild",
-			"--background-index"
-		},
+	cmd = {
+		"clangd","--compile-commands-dir=./.cmakebuild",
+		"--background-index", "--clang-tidy",
+		"--completion-style=detailed"
 	},
-	capabilities = capab,
+	capabilities = capabs,
 	root_dir = function()
 		return vim.fn.getcwd()
 	end
 	}
 else
-	print('Using ccls')
 	lspconfig.ccls.setup {
 	init_options = {
 		cache = {
@@ -129,6 +127,7 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
+
 -- NVIM TREE
 require'nvim-tree'.setup
 {
@@ -168,18 +167,89 @@ nnoremap <leader>cb :CMakeBuild<CR>
 nnoremap <leader>cr :CMakeRun<CR>
 ]])
 -- NVIM TABS
-local bufline = require 'bufferline'
-local hl = require'bufferline.utils'.hl
 
-bufline.setup {
-	auto_hide = true,
-	closable = true,
-	clickable = true,
-	icons = true,
-	icon_custom_colors = false,
-}
 require("toggleterm").setup{
 	float_opts = {
 		border = {"╔", "═" ,"╗", "║", "╝", "═", "╚", "║"}
+	},
+	open_mapping = '<c-t>',
+	direction = 'float'
+}
+require('nvim-autopairs').setup{
+	fast_wrap = {
+		chars = { '{','[','(','"',"'" },
+		map = '<M-(>',
+		end_key = ')'
 	}
+}
+require('telescope').setup{}
+-- SUMNEKO LSP
+-- reference: https://jdhao.github.io/2021/08/12/nvim_sumneko_lua_conf/
+local sumneko_binary_path = vim.fn.exepath('lua-language-server')
+-- TODO: Idk if :h paremeter is enough to make stuff work on linux
+-- i tested it only on windows
+local sumneko_root_path = vim.fn.fnamemodify(sumneko_binary_path, ':h')
+
+local runtime_path = vim.split(package.path, ';')
+table.insert(runtime_path, "lua/?.lua")
+table.insert(runtime_path, "lua/?/init.lua")
+
+require'lspconfig'.sumneko_lua.setup {
+    cmd = {sumneko_binary_path, "-E", sumneko_root_path .. "/main.lua"};
+    settings = {
+        Lua = {
+        runtime = {
+            version = 'LuaJIT',
+            path = runtime_path,
+        },
+        diagnostics = {
+            globals = {'vim'},
+        },
+        workspace = {
+            library = vim.api.nvim_get_runtime_file("", true),
+        },
+        telemetry = {
+            enable = false,
+        },
+        },
+    },
+}
+
+require'dressing'.setup{}
+require'bufferline'.setup {
+	options = {
+		mode = 'buffers',
+	}
+}
+-- DASHBOARD
+local db = require'dashboard'
+db.preview_file_height = 12
+db.session_directory = os.getenv("TMP")
+db.preview_file_width = 80
+db.hide_tabline = false
+db.custom_header = {
+  ' ███╗   ██╗ ███████╗ ██████╗  ██╗   ██╗ ██╗ ███╗   ███╗',
+  ' ████╗  ██║ ██╔════╝██╔═══██╗ ██║   ██║ ██║ ████╗ ████║',
+  ' ██╔██╗ ██║ █████╗  ██║   ██║ ██║   ██║ ██║ ██╔████╔██║',
+  ' ██║╚██╗██║ ██╔══╝  ██║   ██║ ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║',
+  ' ██║ ╚████║ ███████╗╚██████╔╝  ╚████╔╝  ██║ ██║ ╚═╝ ██║',
+  ' ╚═╝  ╚═══╝ ╚══════╝ ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝'
+}
+db.custom_center = {
+     {icon = '  ',
+      desc = 'Recently latest session                  ',
+      shortcut = 'SPC s l',
+      action ='SessionLoad'},
+      {icon = '  ',
+      desc = 'Recently opened files                   ',
+      action =  'DashboardFindHistory',
+      shortcut = 'SPC f h'},
+      {icon = '  ',
+      desc = 'Find  File                              ',
+      action = 'Telescope find_files find_command=rg,--hidden,--files',
+      shortcut = 'SPC f f'},
+      {icon = '  ',
+      desc ='File Browser                            ',
+      action =  'Telescope file_browser',
+      shortcut = 'SPC f b'},
 }
