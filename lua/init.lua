@@ -2,9 +2,10 @@
 local default_conf = { noremap = true, silent = true };
 
 vim.keymap.set('n','<Leader>fmt', vim.lsp.buf.formatting,default_conf)
+vim.keymap.set('v','<Leader>fmt', vim.lsp.buf.range_formatting,default_conf)
 vim.keymap.set('n','<Leader>def',vim.lsp.buf.definition,default_conf)
 vim.keymap.set('n','<Leader>rn',vim.lsp.buf.rename,default_conf)
-
+vim.keymap.set('n','<Leader>hov',vim.lsp.buf.hover,default_conf)
 
 -- LUA LINE
 require('lualine').setup {
@@ -40,17 +41,22 @@ require('lualine').setup {
 local capabs = vim.lsp.protocol.make_client_capabilities()
 capabs = require('cmp_nvim_lsp').update_capabilities(capabs)
 local lspconfig = require('lspconfig')
+local util = require('lspconfig.util')
 
 -- CCLS CONFIG
-if vim.fn.has('win32')
-then
-	ccls_cache_dir = ""
-else
-	ccls_cache_dir = "/tmp/ccls/"
+root_files = {
+	'.clang-format',
+	'CMakeLists.txt',
+	'Makefile',
+	'.cmakebuild/compile_commands.json',
+	'.clangd',
+}
+function cxx_root_dir()
+	return util.root_pattern(unpack(root_files))(vim.fn.getcwd())
 end
-
 local has_ccls = vim.fn.exepath('ccls')
-if has_ccls then
+local force_clangd = true 
+if force_clangd or has_ccls == nil then
 	lspconfig.clangd.setup {
 	cmd = {
 		"clangd","--compile-commands-dir=./.cmakebuild",
@@ -58,15 +64,13 @@ if has_ccls then
 		"--completion-style=detailed"
 	},
 	capabilities = capabs,
-	root_dir = function()
-		return vim.fn.getcwd()
-	end
+	root_dir = cxx_root_dir
 	}
 else
 	lspconfig.ccls.setup {
 	init_options = {
 		cache = {
-			directory = ccls_cache_dir
+			directory = os.getenv("TMP").."ccls"
 		},
 		compilationDatabaseDirectory = ".cmakebuild",
 		completion = {
@@ -76,10 +80,9 @@ else
 			lsRanges = true
 		},
 	},
-	root_dir = function() 
-		return vim.fn.getcwd()
-	end,
-	capabilities = capabs
+	root_dir = cxx_root_dir,
+	capabilities = capabs,
+	single_file_support = true
 	}
 end
 
@@ -218,7 +221,7 @@ require'lspconfig'.sumneko_lua.setup {
 require'dressing'.setup{}
 require'bufferline'.setup {
 	options = {
-		mode = 'buffers',
+		mode = 'tabs',
 	}
 }
 -- DASHBOARD

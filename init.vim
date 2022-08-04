@@ -17,7 +17,7 @@ map i <Up>
 map j <Left>
 map k <Down>
 noremap <Space> i
-noremap h i
+noremap h i <Esc>r
 " " Jump to next word with ctrl+j/l
 noremap <C-l> w
 noremap <C-j> b
@@ -44,9 +44,15 @@ nnoremap <leader>P "+P
 " " Move to next buffer
 noremap <silent> <S-j> 	:bp<CR>
 noremap <silent> <S-l> 	:bn<CR>
+" " Move through windows
+noremap <silent> <C-w>k <C-w>j
+noremap <silent> <C-w>i <C-w>k
+noremap <silent> <C-w>j <C-w>h
+
 " " Change dir to current file's dir 
 nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
-nnoremap <leader>lcd :lcd %:p:h<CR>:pwd<CR>
+nnoremap <leader>lcd :tcd %:p:h<CR>:pwd<CR>
+"nnoremap <leader>tcd :tcd %:p:h<CR>:pwd<CR>
 nnoremap <leader>e :NvimTreeToggle<CR>
 " " Terminal
 tnoremap <Esc> <C-\><C-n>
@@ -61,7 +67,7 @@ if (has("termguicolors"))
 endif
 
 syntax enable
-colorscheme horizon
+colorscheme base16-unikitty-dark
 
 highlight Cursor guifg=none guibg=pink
 highlight iCursor guifg=none guibg=#99bbff
