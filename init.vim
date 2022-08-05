@@ -19,10 +19,14 @@ map k <Down>
 noremap <Space> i
 noremap h i <Esc>r
 " " Jump to next word with ctrl+j/l
-noremap <C-l> w
-noremap <C-j> b
-inoremap <C-l> <Esc>w
-inoremap <C-j> <Esc>b
+noremap <C-l>	w
+noremap <C-j>	b
+noremap <C-i>	<C-u>
+noremap <C-k>	<C-d>
+inoremap <C-l>	<Esc>w
+inoremap <C-j>	<Esc>b
+inoremap <C-i>	<C-u>
+inoremap <C-k>	<C-d>
 " " Line swapping
 nnoremap <silent> <M-i> :m-2<CR>==
 nnoremap <silent> <M-k> :m+1<CR>==
@@ -67,8 +71,8 @@ if (has("termguicolors"))
 endif
 
 syntax enable
-colorscheme base16-unikitty-dark
 
+colorscheme oxocarbon-lua 
 highlight Cursor guifg=none guibg=pink
 highlight iCursor guifg=none guibg=#99bbff
 

@@ -3,9 +3,8 @@ local use = packer.use
 packer.startup({function()
 	-- themes
 	use 'base16-project/base16-vim'
-	use 'yassinebridi/vim-purpura'
-	use 'cseelus/vim-colors-lucid'
 	use 'LunarVim/horizon.nvim'
+	use 'B4mbus/oxocarbon-lua.nvim'
 	-- plugins
 	use 'glepnir/dashboard-nvim'
 	use 'stevearc/dressing.nvim'
@@ -16,7 +15,12 @@ packer.startup({function()
 	use 'hrsh7th/cmp-nvim-lsp'
 	use 'saadparwaiz1/cmp_luasnip'
 	use 'L3MON4D3/LuaSnip'
-	use 'ilyachur/cmake4vim'
+	use {
+		'ilyachur/cmake4vim',
+		disable = true
+	}
+	use 'Shatur/neovim-cmake'
+	use 'mfussenegger/nvim-dap'
 	use 'windwp/nvim-autopairs'
 	use {
 		'nvim-telescope/telescope.nvim',
@@ -30,7 +34,7 @@ packer.startup({function()
 		lock = true,
 		requires = {'kyazdani42/nvim-web-devicons'}
 	}
-   	use 'jackguo380/vim-lsp-cxx-highlight'
+	use 'nvim-treesitter/nvim-treesitter'
 	use {
     	'kyazdani42/nvim-tree.lua',
     	requires = {'kyazdani42/nvim-web-devicons', opt = true},

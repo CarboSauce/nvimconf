@@ -42,6 +42,7 @@ local capabs = vim.lsp.protocol.make_client_capabilities()
 capabs = require('cmp_nvim_lsp').update_capabilities(capabs)
 local lspconfig = require('lspconfig')
 local util = require('lspconfig.util')
+local path = require'plenary.path'
 
 -- CCLS CONFIG
 root_files = {
@@ -85,6 +86,16 @@ else
 	single_file_support = true
 	}
 end
+-- TREESITTER
+require'nvim-treesitter.configs'.setup {
+	ensure_installed = {'c','cpp','lua','cmake'},
+	sync_install = true,
+	highlight = {
+		enable = true,
+		additional_vim_regex_highlighting = false
+	},
+	indent = { enable = true }
+}
 
 -- SNIPPETS AND NVIM-CMP
 local luasnip = require 'luasnip'
@@ -149,26 +160,36 @@ require'nvim-tree'.setup
 	}
 };
 -- CMAKE4VIM
-vim.cmd([[
-let g:cmake_kits = {
-            \  "gcc": {
-            \    "compilers": {
-            \        "C": "/usr/bin/gcc",
-            \        "CXX": "/usr/bin/g++"
-            \  },
-			\ "clang": {
-			\  "compilers": {
-			\   "C": "/usr/bin/clang",
-			\   "CXX": "/usr/bin/clang++"
-			\}}}}
-let g:cmake_build_dir = ".cmakebuild"
-let g:cmake_compile_commands = 1 
-let g:cmake_project_generator = "Ninja"
-let g:make_arguments = "-j 8"
-nnoremap <leader>cc :CMake<CR>
-nnoremap <leader>cb :CMakeBuild<CR>
-nnoremap <leader>cr :CMakeRun<CR>
-]])
+-- vim.cmd([[
+-- let g:cmake_kits = {
+--             \  "gcc": {
+--             \    "compilers": {
+--             \        "C": "/usr/bin/gcc",
+--             \        "CXX": "/usr/bin/g++"
+--             \  },
+-- 			\ "clang": {
+-- 			\  "compilers": {
+-- 			\   "C": "/usr/bin/clang",
+-- 			\   "CXX": "/usr/bin/clang++"
+-- 			\}}}}
+-- let g:cmake_build_dir = ".cmakebuild"
+-- let g:cmake_compile_commands = 1 
+-- let g:cmake_project_generator = "Ninja"
+-- let g:make_arguments = "-j 8"
+-- nnoremap <leader>cc :CMake<CR>
+-- nnoremap <leader>cb :CMakeBuild<CR>
+-- nnoremap <leader>cr :CMakeRun<CR>
+-- ]])
+-- Neovim-cmake
+require('cmake').setup{
+	build_dir = function ()
+		return vim.fn.getcwd() .. '/.cmakebuild'
+	end,
+	parameters_file = '.cmakebuild/neovim.json',
+	build_args = {'-j6'},
+	copy_compile_commands = false
+}
+
 -- NVIM TABS
 
 require("toggleterm").setup{
@@ -176,15 +197,18 @@ require("toggleterm").setup{
 		border = {"╔", "═" ,"╗", "║", "╝", "═", "╚", "║"}
 	},
 	open_mapping = '<c-t>',
-	direction = 'float'
+	direction = 'float',
+	persist_mode = false -- start always in insert mode
 }
 require('nvim-autopairs').setup{
 	fast_wrap = {
 		chars = { '{','[','(','"',"'" },
-		map = '<M-(>',
+		map = '<M-e>',
 		end_key = ')'
 	}
 }
+
+-- susybaka
 require('telescope').setup{}
 -- SUMNEKO LSP
 -- reference: https://jdhao.github.io/2021/08/12/nvim_sumneko_lua_conf/
