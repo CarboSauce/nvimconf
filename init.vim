@@ -4,10 +4,8 @@ set softtabstop=0
 set guicursor=n-v-c:block-Cursor,i:block-iCursor
 set number
 set mouse=a
-set foldmethod=manual
-set foldlevel=99
-set nofoldenable
 set nohlsearch
+set nofoldenable
 set sessionoptions+=globals
 let mapleader = ";"
 " Keybindings
@@ -18,6 +16,16 @@ map j <Left>
 map k <Down>
 noremap <Space> i
 noremap h i <Esc>r
+" Netrw stuff
+" augroup netrw_mapping
+"     autocmd!
+"     autocmd filetype netrw call NetrwMapping()
+" augroup END
+" 
+" function! NetrwMapping()
+"     noremap <buffer> i k 
+" endfunction
+
 " " Jump to next word with ctrl+j/l
 noremap <C-l>	w
 noremap <C-j>	b
@@ -25,8 +33,8 @@ noremap <C-i>	<C-u>
 noremap <C-k>	<C-d>
 inoremap <C-l>	<Esc>w
 inoremap <C-j>	<Esc>b
-inoremap <C-i>	<C-u>
-inoremap <C-k>	<C-d>
+inoremap <C-i>	<Esc><C-u>
+inoremap <C-k>	<Esc><C-d>
 " " Line swapping
 nnoremap <silent> <M-i> :m-2<CR>==
 nnoremap <silent> <M-k> :m+1<CR>==
@@ -72,6 +80,7 @@ endif
 
 syntax enable
 
+let g:oxocarbon_lua_disable_italic = 1
 colorscheme oxocarbon-lua 
 highlight Cursor guifg=none guibg=pink
 highlight iCursor guifg=none guibg=#99bbff

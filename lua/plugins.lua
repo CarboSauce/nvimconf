@@ -6,6 +6,7 @@ packer.startup({function()
 	use 'LunarVim/horizon.nvim'
 	use 'B4mbus/oxocarbon-lua.nvim'
 	-- plugins
+	use "nvim-telescope/telescope-file-browser.nvim"
 	use 'glepnir/dashboard-nvim'
 	use 'stevearc/dressing.nvim'
 	use 'lewis6991/impatient.nvim'

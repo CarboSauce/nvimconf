@@ -56,16 +56,16 @@ function cxx_root_dir()
 	return util.root_pattern(unpack(root_files))(vim.fn.getcwd())
 end
 local has_ccls = vim.fn.exepath('ccls')
-local force_clangd = true 
+local force_clangd = true
 if force_clangd or has_ccls == nil then
 	lspconfig.clangd.setup {
-	cmd = {
-		"clangd","--compile-commands-dir=./.cmakebuild",
-		"--background-index", "--clang-tidy",
-		"--completion-style=detailed"
-	},
-	capabilities = capabs,
-	root_dir = cxx_root_dir
+		cmd = {
+			"clangd","--compile-commands-dir=./.cmakebuild",
+			"--background-index", "--clang-tidy",
+			"--completion-style=detailed"
+		},
+		capabilities = capabs,
+		root_dir = cxx_root_dir
 	}
 else
 	lspconfig.ccls.setup {
@@ -87,6 +87,8 @@ else
 	}
 end
 -- TREESITTER
+vim.wo.foldmethod = 'expr'
+vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
 require'nvim-treesitter.configs'.setup {
 	ensure_installed = {'c','cpp','lua','cmake'},
 	sync_install = true,
@@ -209,7 +211,19 @@ require('nvim-autopairs').setup{
 }
 
 -- susybaka
-require('telescope').setup{}
+require('telescope').setup{
+	mappings = {
+		n = {
+			["k"] = require'telescope.actions'.move_selection_previous
+		}
+	},
+	extensions = {
+		file_browser = {
+			hijack_netrw = true
+		}
+	}
+}
+require("telescope").load_extension "file_browser"
 -- SUMNEKO LSP
 -- reference: https://jdhao.github.io/2021/08/12/nvim_sumneko_lua_conf/
 local sumneko_binary_path = vim.fn.exepath('lua-language-server')
@@ -222,24 +236,24 @@ table.insert(runtime_path, "lua/?.lua")
 table.insert(runtime_path, "lua/?/init.lua")
 
 require'lspconfig'.sumneko_lua.setup {
-    cmd = {sumneko_binary_path, "-E", sumneko_root_path .. "/main.lua"};
-    settings = {
-        Lua = {
-        runtime = {
-            version = 'LuaJIT',
-            path = runtime_path,
-        },
-        diagnostics = {
-            globals = {'vim'},
-        },
-        workspace = {
-            library = vim.api.nvim_get_runtime_file("", true),
-        },
-        telemetry = {
-            enable = false,
-        },
-        },
-    },
+	cmd = {sumneko_binary_path, "-E", sumneko_root_path .. "/main.lua"};
+	settings = {
+		Lua = {
+			runtime = {
+				version = 'LuaJIT',
+				path = runtime_path,
+			},
+			diagnostics = {
+				globals = {'vim'},
+			},
+			workspace = {
+				library = vim.api.nvim_get_runtime_file("", true),
+			},
+			telemetry = {
+				enable = false,
+			},
+		},
+	},
 }
 
 require'dressing'.setup{}
@@ -254,6 +268,7 @@ db.preview_file_height = 12
 db.session_directory = os.getenv("TMP")
 db.preview_file_width = 80
 db.hide_tabline = false
+db.hide_statusline = false
 db.custom_header = {
   ' ███╗   ██╗ ███████╗ ██████╗  ██╗   ██╗ ██╗ ███╗   ███╗',
   ' ████╗  ██║ ██╔════╝██╔═══██╗ ██║   ██║ ██║ ████╗ ████║',
@@ -263,20 +278,20 @@ db.custom_header = {
   ' ╚═╝  ╚═══╝ ╚══════╝ ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝'
 }
 db.custom_center = {
-     {icon = '  ',
-      desc = 'Recently latest session                  ',
-      shortcut = 'SPC s l',
-      action ='SessionLoad'},
-      {icon = '  ',
-      desc = 'Recently opened files                   ',
-      action =  'DashboardFindHistory',
-      shortcut = 'SPC f h'},
-      {icon = '  ',
-      desc = 'Find  File                              ',
-      action = 'Telescope find_files find_command=rg,--hidden,--files',
-      shortcut = 'SPC f f'},
-      {icon = '  ',
-      desc ='File Browser                            ',
-      action =  'Telescope file_browser',
-      shortcut = 'SPC f b'},
+	{icon = '  ',
+		desc = 'Recently latest session                  ',
+		shortcut = 'SPC s l',
+		action ='SessionLoad'},
+	{icon = '  ',
+		desc = 'Recently opened files                   ',
+		action =  'DashboardFindHistory',
+		shortcut = 'SPC f h'},
+	{icon = '  ',
+		desc = 'Find  File                              ',
+		action = 'Telescope find_files find_command=rg,--hidden,--files',
+		shortcut = 'SPC f f'},
+	{icon = '  ',
+		desc ='File Browser                            ',
+		action =  'Telescope file_browser',
+		shortcut = 'SPC f b'},
 }
