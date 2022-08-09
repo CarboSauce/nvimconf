@@ -33,8 +33,7 @@ noremap <C-i>	<C-u>
 noremap <C-k>	<C-d>
 inoremap <C-l>	<Esc>w
 inoremap <C-j>	<Esc>b
-inoremap <C-i>	<C-u>
-inoremap <C-k>	<C-d>
+inoremap <C-k>	<Esc>k
 " " Line swapping
 nnoremap <silent> <M-i> :m-2<CR>==
 nnoremap <silent> <M-k> :m+1<CR>==
