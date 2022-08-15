@@ -2,6 +2,10 @@
 set mouse=a
 set guifontwide='
 
+if exists('g:neovide')
+	noremap <silent> <F11> :let g:neovide_fullscreen=!g:neovide_fullscreen<CR>
+	finish
+endif
 " Disable GUI Tabline
 if exists(':GuiTabline')
     GuiTabline 0
@@ -19,7 +23,7 @@ if exists(':GuiFont')
 endif
 
 if exists(':GuiLinespace')
-	GuiLinespace 2
+	GuiLinespace 0
 endif
 if exists('GuiRenderLigatures 1')
 	GuiRenderLigatures 1
