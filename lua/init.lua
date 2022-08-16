@@ -6,6 +6,7 @@ vim.keymap.set('v','<Leader>fmt', vim.lsp.buf.range_formatting,default_conf)
 vim.keymap.set('n','<Leader>def',vim.lsp.buf.definition,default_conf)
 vim.keymap.set('n','<Leader>rn',vim.lsp.buf.rename,default_conf)
 vim.keymap.set('n','<Leader>hov',vim.lsp.buf.hover,default_conf)
+vim.keymap.set('n','<Leader>ca',vim.lsp.buf.code_action,default_conf)
 
 -- LUA LINE
 require('lualine').setup {
@@ -148,7 +149,15 @@ cmp.setup {
 require'nvim-tree'.setup
 {
 	hijack_netrw = false,
-	update_cwd = true,
+	git = {
+		enable = false
+	},
+	actions = {
+		change_dir = {
+			enable = false
+		}
+	},
+	sync_root_with_cwd = true,
 	update_focused_file = {
 		enable = false
 	},
@@ -260,7 +269,10 @@ require'lspconfig'.sumneko_lua.setup {
 	},
 }
 
-require'dressing'.setup{}
+require'dressing'.setup
+{
+	winblend = 0
+}
 require'bufferline'.setup {
 	options = {
 		mode = 'tabs',

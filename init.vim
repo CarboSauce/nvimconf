@@ -5,8 +5,10 @@ set guicursor=n-v-c:block-Cursor,i:block-iCursor
 set number
 set mouse=a
 set nohlsearch
+set foldlevelstart=99
 set nofoldenable
 set sessionoptions+=globals
+set guifont=FiraCode\ NF:h12
 let mapleader = ";"
 " Keybindings
 " " Move with ijkl

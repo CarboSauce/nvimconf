@@ -3,9 +3,12 @@ set mouse=a
 set guifontwide='
 
 if exists('g:neovide')
-	noremap <silent> <F11> :let g:neovide_fullscreen=!g:neovide_fullscreen<CR>
+	noremap <silent> <F11> :let g:neovide_fullscreen= !g:neovide_fullscreen<CR>
+	let g:neovide_cursor_animation_length=0.04
 	finish
 endif
+
+>>>>>>> Stashed changes
 " Disable GUI Tabline
 if exists(':GuiTabline')
     GuiTabline 0
@@ -19,7 +22,7 @@ endif
 " Set Editor Font
 if exists(':GuiFont')
     " Use GuiFont! to ignore font errors
-    GuiFont	Fira Code:h12
+    GuiFont!	Fira Code:h12
 endif
 
 if exists(':GuiLinespace')
@@ -28,7 +31,6 @@ endif
 if exists('GuiRenderLigatures 1')
 	GuiRenderLigatures 1
 endif
-
 let g:is_fullscreen = 0
 function! ToggleFullScreen()
 	let g:is_fullscreen = !g:is_fullscreen
