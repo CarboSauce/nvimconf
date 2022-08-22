@@ -1,3 +1,4 @@
+set lazyredraw
 set tabstop=4
 set shiftwidth=4
 set softtabstop=0
@@ -82,7 +83,7 @@ endif
 syntax enable
 
 let g:oxocarbon_lua_disable_italic = 1
-colorscheme oxocarbon-lua 
+colorscheme base16-dracula
 highlight Cursor guifg=none guibg=pink
 highlight iCursor guifg=none guibg=#99bbff
 

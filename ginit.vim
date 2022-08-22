@@ -5,6 +5,7 @@ set guifontwide='
 if exists('g:neovide')
 	noremap <silent> <F11> :let g:neovide_fullscreen= !g:neovide_fullscreen<CR>
 	let g:neovide_cursor_animation_length=0.04
+	let neovide_refresh_rate_idle=0
 	finish
 endif
 

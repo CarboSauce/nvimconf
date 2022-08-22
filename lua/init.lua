@@ -87,6 +87,43 @@ else
 	single_file_support = true
 	}
 end
+-- SUMNEKO LSP
+-- reference: https://jdhao.github.io/2021/08/12/nvim_sumneko_lua_conf/
+local sumneko_binary_path = vim.fn.exepath('lua-language-server')
+-- TODO: Idk if :h paremeter is enough to make stuff work on linux
+-- i tested it only on windows
+local sumneko_root_path = vim.fn.fnamemodify(sumneko_binary_path, ':h')
+
+local runtime_path = vim.split(package.path, ';')
+table.insert(runtime_path, "lua/?.lua")
+table.insert(runtime_path, "lua/?/init.lua")
+
+lspconfig.sumneko_lua.setup {
+	cmd = {sumneko_binary_path, "-E", sumneko_root_path .. "/main.lua"};
+	settings = {
+		Lua = {
+			runtime = {
+				version = 'LuaJIT',
+				path = runtime_path,
+			},
+			diagnostics = {
+				globals = {'vim'},
+			},
+			workspace = {
+				library = vim.api.nvim_get_runtime_file("", true),
+			},
+			telemetry = {
+				enable = false,
+			},
+		},
+	},
+}
+lspconfig.cmake.setup{
+	init_options = {
+		buildDirectory = '.cmakebuild'
+	}
+}
+
 -- TREESITTER
 vim.wo.foldmethod = 'expr'
 vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
@@ -229,6 +266,9 @@ require('telescope').setup{
 				["k"] = require'telescope.actions'.move_selection_next
 			}
 		},
+		preview = {
+			hide_on_startup = true
+		}
 	},
 	extensions = {
 		file_browser = {
@@ -237,37 +277,6 @@ require('telescope').setup{
 	}
 }
 require("telescope").load_extension "file_browser"
--- SUMNEKO LSP
--- reference: https://jdhao.github.io/2021/08/12/nvim_sumneko_lua_conf/
-local sumneko_binary_path = vim.fn.exepath('lua-language-server')
--- TODO: Idk if :h paremeter is enough to make stuff work on linux
--- i tested it only on windows
-local sumneko_root_path = vim.fn.fnamemodify(sumneko_binary_path, ':h')
-
-local runtime_path = vim.split(package.path, ';')
-table.insert(runtime_path, "lua/?.lua")
-table.insert(runtime_path, "lua/?/init.lua")
-
-require'lspconfig'.sumneko_lua.setup {
-	cmd = {sumneko_binary_path, "-E", sumneko_root_path .. "/main.lua"};
-	settings = {
-		Lua = {
-			runtime = {
-				version = 'LuaJIT',
-				path = runtime_path,
-			},
-			diagnostics = {
-				globals = {'vim'},
-			},
-			workspace = {
-				library = vim.api.nvim_get_runtime_file("", true),
-			},
-			telemetry = {
-				enable = false,
-			},
-		},
-	},
-}
 
 require'dressing'.setup
 {
