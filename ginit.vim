@@ -9,7 +9,6 @@ if exists('g:neovide')
 	finish
 endif
 
->>>>>>> Stashed changes
 " Disable GUI Tabline
 if exists(':GuiTabline')
     GuiTabline 0
