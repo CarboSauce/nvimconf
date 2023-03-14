@@ -1,7 +1,6 @@
 " Enable Mouse
 set mouse=a
 set guifontwide='
-
 if exists('g:neovide')
 	noremap <silent> <F11> :let g:neovide_fullscreen= !g:neovide_fullscreen<CR>
 	let g:neovide_cursor_animation_length=0.04
@@ -9,7 +8,6 @@ if exists('g:neovide')
 	finish
 endif
 
->>>>>>> Stashed changes
 " Disable GUI Tabline
 if exists(':GuiTabline')
     GuiTabline 0
@@ -23,7 +21,8 @@ endif
 " Set Editor Font
 if exists(':GuiFont')
     " Use GuiFont! to ignore font errors
-    GuiFont!	Fira Code:h12
+	" Terminus [xos4]:h12
+    GuiFont!	Bm437 ATI 8x16
 endif
 
 if exists(':GuiLinespace')

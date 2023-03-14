@@ -1,41 +1,39 @@
 -- General configs
-local default_conf = { noremap = true, silent = true };
-
-vim.keymap.set('n','<Leader>fmt', vim.lsp.buf.formatting,default_conf)
-vim.keymap.set('v','<Leader>fmt', vim.lsp.buf.range_formatting,default_conf)
-vim.keymap.set('n','<Leader>def',vim.lsp.buf.definition,default_conf)
-vim.keymap.set('n','<Leader>rn',vim.lsp.buf.rename,default_conf)
-vim.keymap.set('n','<Leader>hov',vim.lsp.buf.hover,default_conf)
-vim.keymap.set('n','<Leader>ca',vim.lsp.buf.code_action,default_conf)
-
+vim.api.nvim_create_user_command('Fmt', vim.lsp.buf.formatting, { nargs = 0 })
+vim.api.nvim_create_user_command('Fmtrange', vim.lsp.buf.range_formatting, { nargs = 0 })
+vim.api.nvim_create_user_command('Impl', vim.lsp.buf.definition, { nargs = 0 })
+vim.api.nvim_create_user_command('Rename', function() vim.lsp.buf.rename() end, { nargs = 0 })
+vim.api.nvim_create_user_command('Hover', vim.lsp.buf.hover, { nargs = 0 })
+vim.api.nvim_create_user_command('Codeaction', vim.lsp.buf.code_action, { nargs = 0 })
+vim.api.nvim_create_user_command('Diag', vim.diagnostic.open_float, { nargs = 0 })
 -- LUA LINE
 require('lualine').setup {
-  options = {
-    icons_enabled = true,
-    theme = 'horizon',
-    component_separators = { left = '│', right = '│'},
-    section_separators = { left = '▌', right = '▐'},
-    disabled_filetypes = {},
-    always_divide_middle = true,
-  },
-  sections = {
-    lualine_a = {'mode'},
-    lualine_b = {'diagnostics'},
-    lualine_c = {'filename'},
-    lualine_x = {'encoding', 'fileformat', 'filetype'},
-    lualine_y = {'progress'},
-    lualine_z = {'location'}
-  },
-  inactive_sections = {
-    lualine_a = {},
-    lualine_b = {},
-    lualine_c = {'filename'},
-    lualine_x = {'location'},
-    lualine_y = {},
-    lualine_z = {}
-  },
-  tabline = {},
-  extensions = {}
+	options = {
+		icons_enabled = true,
+		theme = 'horizon',
+		component_separators = { left = '│', right = '│' },
+		section_separators = { left = '▌', right = '▐' },
+		disabled_filetypes = {},
+		always_divide_middle = true,
+	},
+	sections = {
+		lualine_a = { 'mode' },
+		lualine_b = { 'diagnostics' },
+		lualine_c = { 'filename' },
+		lualine_x = { 'encoding', 'fileformat', 'filetype' },
+		lualine_y = { 'progress' },
+		lualine_z = { 'location' }
+	},
+	inactive_sections = {
+		lualine_a = {},
+		lualine_b = {},
+		lualine_c = { 'filename' },
+		lualine_x = { 'location' },
+		lualine_y = {},
+		lualine_z = {}
+	},
+	tabline = {},
+	extensions = {}
 
 }
 -- LSP STUFF
@@ -43,8 +41,14 @@ local capabs = vim.lsp.protocol.make_client_capabilities()
 capabs = require('cmp_nvim_lsp').update_capabilities(capabs)
 local lspconfig = require('lspconfig')
 local util = require('lspconfig.util')
-local path = require'plenary.path'
-
+local path = require 'plenary.path'
+vim.diagnostic.config {
+	virtual_text = false,
+	signs = true,
+	underline = true,
+	update_in_insert = false,
+	severity_sort = false
+}
 -- CCLS CONFIG
 root_files = {
 	'.clang-format',
@@ -56,37 +60,61 @@ root_files = {
 function cxx_root_dir()
 	return util.root_pattern(unpack(root_files))(vim.fn.getcwd())
 end
-local has_ccls = vim.fn.exepath('ccls')
-local force_clangd = true
-if force_clangd or has_ccls == nil then
+
+if vim.g.use_clangd then
 	lspconfig.clangd.setup {
 		cmd = {
-			"clangd","--compile-commands-dir=./.cmakebuild",
+			"clangd", 
+			"--compile-commands-dir=./.cmakebuild",
 			"--background-index", "--clang-tidy",
-			"--completion-style=detailed"
+			"--enable-config"
 		},
 		capabilities = capabs,
 		root_dir = cxx_root_dir
 	}
 else
 	lspconfig.ccls.setup {
-	init_options = {
-		cache = {
-			directory = os.getenv("TMP").."ccls"
+		init_options = {
+			cache = {
+				directory = ".cmakebuild/ccls"
+			},
+			compilationDatabaseDirectory = ".cmakebuild",
+			completion = {
+				placeholder = false
+			},
+			highlight = {
+				lsRanges = true
+			},
 		},
-		compilationDatabaseDirectory = ".cmakebuild",
-		completion = {
-			placeholder = false
-		},
-		highlight = {
-			lsRanges = true
-		},
-	},
-	root_dir = cxx_root_dir,
-	capabilities = capabs,
-	single_file_support = true
+		root_dir = cxx_root_dir,
+		capabilities = capabs,
+		single_file_support = true
 	}
 end
+-- RUST ANALYZER
+lspconfig.serve_d.setup{}
+lspconfig.rust_analyzer.setup {
+	settings = {
+		["rust-analyzer"] = {
+			imports = {
+				granularity = {
+					group = "module",
+				},
+				prefix = "self";
+			},
+			--cargo = {
+			--	buildScripts = {
+			--		enable = true,
+			--	}
+			--},
+			procMacro = {
+				enable = true
+			}
+		}
+	}
+}
+
+
 -- SUMNEKO LSP
 -- reference: https://jdhao.github.io/2021/08/12/nvim_sumneko_lua_conf/
 local sumneko_binary_path = vim.fn.exepath('lua-language-server')
@@ -99,7 +127,7 @@ table.insert(runtime_path, "lua/?.lua")
 table.insert(runtime_path, "lua/?/init.lua")
 
 lspconfig.sumneko_lua.setup {
-	cmd = {sumneko_binary_path, "-E", sumneko_root_path .. "/main.lua"};
+	cmd = { sumneko_binary_path, "-E", sumneko_root_path .. "/main.lua" };
 	settings = {
 		Lua = {
 			runtime = {
@@ -107,7 +135,7 @@ lspconfig.sumneko_lua.setup {
 				path = runtime_path,
 			},
 			diagnostics = {
-				globals = {'vim'},
+				globals = { 'vim' },
 			},
 			workspace = {
 				library = vim.api.nvim_get_runtime_file("", true),
@@ -118,7 +146,7 @@ lspconfig.sumneko_lua.setup {
 		},
 	},
 }
-lspconfig.cmake.setup{
+lspconfig.cmake.setup {
 	init_options = {
 		buildDirectory = '.cmakebuild'
 	}
@@ -127,8 +155,8 @@ lspconfig.cmake.setup{
 -- TREESITTER
 vim.wo.foldmethod = 'expr'
 vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
-require'nvim-treesitter.configs'.setup {
-	ensure_installed = {'c','cpp','lua','cmake'},
+require 'nvim-treesitter.configs'.setup {
+	ensure_installed = { 'c', 'cpp', 'lua', 'cmake', 'rust' },
 	sync_install = true,
 	highlight = {
 		enable = true,
@@ -136,54 +164,74 @@ require'nvim-treesitter.configs'.setup {
 	},
 	indent = { enable = false }
 }
+require'treesitter-context'.setup{
+	enable = true,
+	patterns = {
+		default = {
+		'class',
+		'funciton',
+		'method'
+		}
+	}
+}
 
 -- SNIPPETS AND NVIM-CMP
 local luasnip = require 'luasnip'
 local cmp = require 'cmp'
 cmp.setup {
-  snippet = {
-    expand = function(args)
-      require('luasnip').lsp_expand(args.body)
-    end,
-  },
-  mapping = {
-    ['<C-p>'] = cmp.mapping.select_prev_item(),
-    ['<C-n>'] = cmp.mapping.select_next_item(),
-    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-e>'] = cmp.mapping.close(),
-    ['<CR>'] = cmp.mapping.confirm {
-      behavior = cmp.ConfirmBehavior.Replace,
-      select = true,
-    },
-    ['<Tab>'] = function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      elseif luasnip.expand_or_jumpable() then
-        luasnip.expand_or_jump()
-      else
-        fallback()
-      end
-    end,
-    ['<S-Tab>'] = function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif luasnip.jumpable(-1) then
-        luasnip.jump(-1)
-      else
-        fallback()
-      end
-    end,
-  },
-  sources = {
-    { name = 'nvim_lsp' },
-    { name = 'luasnip' },
-  },
+	snippet = {
+		expand = function(args)
+			require('luasnip').lsp_expand(args.body)
+		end,
+	},
+	mapping = {
+		['<C-p>'] = cmp.mapping.select_prev_item(),
+		['<C-n>'] = cmp.mapping.select_next_item(),
+		['<C-d>'] = cmp.mapping.scroll_docs(-4),
+		['<C-f>'] = cmp.mapping.scroll_docs(4),
+		['<C-Space>'] = cmp.mapping.complete(),
+		['<C-e>'] = cmp.mapping.close(),
+		['<CR>'] = cmp.mapping.confirm {
+			behavior = cmp.ConfirmBehavior.Replace,
+			select = true,
+		},
+		['<Tab>'] = function(fallback)
+			if cmp.visible() then
+				cmp.select_next_item()
+			else
+				fallback()
+			end
+		end,
+		['<C-l>'] = function(fallback)
+			if luasnip.expand_or_jumpable() then
+				luasnip.expand_or_jump()
+			else
+				fallback()
+			end
+		end,
+		['<C-j>'] = function(fallback)
+			if luasnip.jumpable(-1) then
+				luasnip.jump(-1)
+			else
+				fallback()
+			end
+		end,
+		['<S-Tab>'] = function(fallback)
+			if cmp.visible() then
+				cmp.select_prev_item()
+			else
+				fallback()
+			end
+		end,
+	},
+	sources = {
+		{ name = 'nvim_lsp' },
+		{ name = 'luasnip' },
+	},
 }
 
 -- NVIM TREE
-require'nvim-tree'.setup
+require 'nvim-tree'.setup
 {
 	hijack_netrw = false,
 	git = {
@@ -208,62 +256,43 @@ require'nvim-tree'.setup
 		width = 25
 	}
 };
--- CMAKE4VIM
--- vim.cmd([[
--- let g:cmake_kits = {
---             \  "gcc": {
---             \    "compilers": {
---             \        "C": "/usr/bin/gcc",
---             \        "CXX": "/usr/bin/g++"
---             \  },
--- 			\ "clang": {
--- 			\  "compilers": {
--- 			\   "C": "/usr/bin/clang",
--- 			\   "CXX": "/usr/bin/clang++"
--- 			\}}}}
--- let g:cmake_build_dir = ".cmakebuild"
--- let g:cmake_compile_commands = 1 
--- let g:cmake_project_generator = "Ninja"
--- let g:make_arguments = "-j 8"
--- nnoremap <leader>cc :CMake<CR>
--- nnoremap <leader>cb :CMakeBuild<CR>
--- nnoremap <leader>cr :CMakeRun<CR>
--- ]])
 -- Neovim-cmake
-require('cmake').setup{
-	build_dir = function ()
+require('cmake').setup {
+	build_dir = function()
 		return vim.fn.getcwd() .. '/.cmakebuild'
 	end,
 	parameters_file = '.cmakebuild/neovim.json',
-	configure_args = {'-D','CMAKE_EXPORT_COMPILE_COMMANDS=1','-G','Ninja Multi-Config'},
-	build_args = {'-j6'},
+	configure_args = { '-D', 'CMAKE_EXPORT_COMPILE_COMMANDS=1', '-G', 'Ninja Multi-Config' },
+	build_args = { '-j6' },
 	copy_compile_commands = false
 }
 
 -- NVIM TABS
 
-require("toggleterm").setup{
+require("toggleterm").setup {
 	float_opts = {
-		border = {"╔", "═" ,"╗", "║", "╝", "═", "╚", "║"}
+		border = { "╔", "═", "╗", "║", "╝", "═", "╚", "║" }
 	},
 	open_mapping = '<c-t>',
 	direction = 'float',
 	persist_mode = false -- start always in insert mode
 }
-require('nvim-autopairs').setup{
+require('nvim-autopairs').setup {
 	fast_wrap = {
-		chars = { '{','[','(','"',"'" },
+		chars = { '<','{', '[', '(', '"', "'" },
 		map = '<M-e>',
 		end_key = ')'
 	}
 }
 
 -- susybaka
-require('telescope').setup{
+local tsa = require 'telescope.actions'
+require('telescope').setup {
 	defaults = {
 		mappings = {
 			n = {
-				["k"] = require'telescope.actions'.move_selection_next
+				["k"] = tsa.move_selection_next,
+				["i"] = tsa.move_selection_previous
 			}
 		},
 		preview = {
@@ -278,17 +307,17 @@ require('telescope').setup{
 }
 require("telescope").load_extension "file_browser"
 
-require'dressing'.setup
+require 'dressing'.setup
 {
 	winblend = 0
 }
-require'bufferline'.setup {
+require 'bufferline'.setup {
 	options = {
 		mode = 'tabs',
 	}
 }
 -- DASHBOARD
-local db = require'dashboard'
+local db = require 'dashboard'
 db.preview_file_height = 12
 db.session_directory = os.getenv("TMP")
 db.preview_file_width = 80
@@ -302,37 +331,37 @@ db.hide_statusline = false
 --   ' ██║ ╚████║ ███████╗╚██████╔╝  ╚████╔╝  ██║ ██║ ╚═╝ ██║',
 --   ' ╚═╝  ╚═══╝ ╚══════╝ ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝'
 -- }
-db.custom_header= {
-'⠄⠄⠠⠄⠄⠄⢐⢀⢳⡱⣝⢮⢯⡺⡝⡞⣎⢯⡚⡴⣕⢯⢣⡳⡝⡐⡰⡽⣕⢧⡊⢜⠱⡝⣕⢯⡳⣝⢵⡫⡮⡕⡫⣳⠽⡵⣕⠝⣎⢗⡝⡎⡣⡑⢌⠢⡑⡌⣞⢵',
-'⠄⠂⢄⡡⣲⡪⡶⣝⢵⡫⣞⢵⡳⣍⢗⠵⣕⢗⢜⡞⡮⣫⢸⢎⢇⠢⣝⢞⢮⡳⣝⢖⡕⡨⢪⢣⢯⡺⣕⢯⡺⣝⢵⣱⡹⡜⢮⡫⣎⢞⢘⠔⡡⢊⠢⡑⢌⢢⢳⢝',
-'⢀⡕⣗⢽⣪⢯⡺⡱⣕⣗⢽⢱⡪⡮⣫⢇⣗⢽⢕⢯⢎⣞⢼⢝⣕⢸⡪⣏⢗⣝⢮⡳⣝⢝⢌⠳⡳⣝⢮⡳⣝⢮⡳⣕⣇⢯⡣⡝⢮⡳⡔⠡⡊⢔⠡⡊⡂⡪⡳⣝',
-'⡞⡮⣳⢝⡎⡧⡺⣝⢮⢮⢣⡳⣝⣝⢮⡳⡱⣕⢯⡳⣱⢳⢕⢝⡮⡢⡫⡮⣳⢳⡳⣝⢮⡫⡆⠅⡯⡮⡳⡝⡮⡳⣝⢮⡺⡔⡽⣝⢎⢮⡫⡮⡐⢅⠪⡐⢌⢢⡫⡮',
-'⡯⡺⡕⢫⡪⡯⣝⢎⠇⠕⢵⢝⢮⢮⡳⣣⣳⡪⡳⣕⢵⣫⡳⣕⢝⡞⡎⡯⡮⡳⣝⢮⡳⣝⢐⢄⢯⡺⣝⡎⣞⣝⢮⡳⣝⣕⣝⢮⡫⣖⡝⡮⣎⠢⡑⢌⢢⡣⡯⣲',
-'⢗⠑⡸⡵⣝⠞⢌⠢⠨⢨⢪⢫⣳⢳⢝⡎⠶⡙⡙⢌⢪⡺⡚⢎⢓⢍⢳⢜⢮⡫⡮⡳⢑⢐⢐⢸⢕⢯⡺⣜⢪⢮⡳⣝⢮⣲⢳⡳⣝⢮⡺⣜⢮⢇⡊⡦⡳⡝⡎⡮',
-'⠁⡂⣗⣝⡎⡣⢁⠪⢨⢮⢱⣹⡪⣏⢗⠡⢑⢐⢈⠢⢘⠊⢌⢂⢂⠢⠊⡂⡢⢑⠝⡈⡂⠢⠂⠕⡙⡑⠝⡊⢧⡳⢝⢮⡳⡵⣕⢝⢮⡳⣝⢮⡪⣳⡣⡏⣗⠝⢄⢫',
-'⠐⢸⡪⣞⡌⡢⡁⣪⢮⠑⡜⡲⡝⡜⠡⢊⠔⡐⡐⢌⠐⠌⡂⡂⠢⠡⡑⡐⡨⢐⢐⠄⡐⢅⢊⠔⡐⠌⠢⡈⠢⡑⠨⠡⡙⡚⢮⡳⡕⡯⡮⡳⣝⢜⡞⡜⣕⢵⢂⢑',
-'⢈⠘⡮⡳⡝⢔⢰⢕⢧⢑⠌⠪⡐⠌⢌⠢⡑⡰⠐⠄⢅⢅⢐⠌⠌⡂⡂⡂⡢⢂⢂⠢⠨⡂⠆⢅⠢⡁⡑⠌⠢⠨⢐⠡⢂⠊⢔⠨⠺⡸⣪⢯⢮⢳⢝⡵⣪⡳⣅⠢',
-'⠄⡂⢸⡝⢌⠂⣗⢽⡹⡐⠌⡂⠢⠡⢑⠨⠐⠐⠈⠌⡐⠰⡐⡅⡂⢂⠊⢔⠠⡁⡂⡊⠔⠨⡈⢂⠑⠨⠄⢅⠅⡑⢔⠈⠄⢕⠠⠡⡑⢱⡳⣝⠌⢜⡵⣝⢮⣺⢺⡌',
-'⢀⠂⡑⢇⢑⢨⢮⢳⢕⠐⠅⠌⢌⠈⠠⡐⣔⠥⠌⢄⠈⢂⢞⢮⢮⠠⠑⠄⢅⢂⠢⠠⠁⡡⣐⢔⣐⠔⢌⢀⠨⠐⡡⢑⠅⡂⢅⢑⢌⡞⣞⢌⠌⡪⣞⢮⡳⣕⣗⣕',
-'⢀⠂⡂⢂⢂⢯⡪⣝⢦⢑⠡⡁⠅⡐⢕⡽⡊⠄⠄⠄⡣⢂⡏⣗⢗⠨⡨⠨⢂⢐⢌⡠⣪⣺⠘⠁⡀⢟⢦⣑⢄⠈⡀⠅⡂⡂⠅⡜⣞⢮⡣⢂⡱⣝⢮⡳⢹⣪⡺⣜',
-'⢐⠐⣐⣜⢶⢜⢜⢮⡳⡕⢰⠠⠄⢬⢜⡽⠠⡈⠄⡂⢽⢜⢞⣊⠣⡑⢄⢅⢵⡸⡼⣜⢮⠎⡀⠂⠠⢨⣳⡳⡅⡂⠄⢌⠂⠄⢕⢸⢕⣗⡕⠄⡯⡮⣳⠨⢸⡪⣞⢮',
-'⢐⢨⡲⡵⡹⣸⢕⣝⢮⠣⡁⡯⡊⡮⣳⢽⢅⠪⡣⢢⢯⡫⡳⡵⣝⣜⢮⡳⡳⡝⣞⢮⡫⡇⡲⡨⡸⡸⣪⢞⡵⡡⢁⢆⠅⢅⠅⡪⡳⣕⢧⠡⡫⣞⢅⢊⢢⢯⢮⡳',
-'⣔⢗⢝⣜⢮⢇⢧⡳⡑⢅⠂⣏⢗⣕⢝⠮⣳⢧⠮⡳⣳⡹⣕⢗⢜⣜⢞⣎⢯⡺⣪⡳⢽⢝⣌⣊⣔⢽⣪⢯⢞⣜⢮⢳⠨⡐⠌⢔⢯⢮⡫⠢⡹⣪⢂⠢⣕⢗⣗⢽',
-'⡣⣞⢵⡳⡝⡼⡕⡂⡊⢄⢑⢸⢕⣗⢽⢕⢧⢖⢧⢯⡺⣜⢮⢪⡳⣕⢗⣕⢗⣝⢮⡺⣪⢕⣗⢕⣳⢹⢬⢎⡞⡮⡺⣕⠇⡢⣕⢽⢕⡗⡇⡑⡸⡵⡅⢕⢗⣝⢮⡳',
-'⡯⡺⢕⠍⡜⡮⡂⠆⡊⡐⡐⡸⣕⢧⡳⣝⢵⡫⡳⣕⢗⢵⢝⢎⡺⣜⣕⢧⡳⣕⢗⡝⡮⡳⣕⢯⢮⢳⢕⣗⣝⠮⡫⣪⡺⡺⣪⠳⠝⠌⡂⢢⡪⣗⢽⠨⡳⣕⢗⡽',
-'⢕⠕⡡⡮⣺⣸⢈⢂⢂⢂⢊⢸⡪⡳⣝⢮⢳⡹⡝⣎⣏⢗⢽⡱⣝⢮⡪⡧⡫⡮⣳⡹⡪⣏⢞⢮⡺⡭⡳⣕⠎⢌⢮⢺⠪⡩⠂⠅⢅⢑⢬⡺⣪⡳⣝⢵⡘⠮⡳⣝',
-'⠐⡬⡳⡙⡊⡢⢑⠠⢂⢂⠢⢊⠪⡯⡺⣪⡳⡝⣞⢼⢬⣃⠃⠄⠄⡁⠑⠙⡱⢹⡸⡪⣏⢮⣫⡺⣪⡳⣝⢎⠌⡢⡫⢂⠅⡂⢅⢑⢔⣕⢗⣝⢞⢮⡳⡝⡎⠌⡪⢚',
-'⠐⡝⢌⢐⠔⠨⡐⠨⡀⡂⡑⠄⢅⢙⢺⢜⢮⡫⣎⢗⣕⢗⡀⢀⠂⢄⠅⡂⡐⣜⢮⡫⡮⡳⣕⢝⢮⡺⣪⡣⡨⢂⠌⡐⡐⡐⠔⡸⣪⢮⡳⣕⠯⡳⢙⠌⡐⡁⡂⠅',
-'⠨⡊⠔⡐⠌⢌⠐⢅⠢⡈⠢⢁⠢⠐⠄⢕⠱⡹⣪⡳⣕⢗⢥⠢⡑⡅⡣⡂⡮⡮⣳⢹⣪⢳⢕⣏⢗⢽⠸⠨⠐⡐⠌⠄⠢⡈⡢⡫⡎⠣⡑⢄⢑⠨⢐⢐⢐⠐⠄⠅',
-'⠨⡐⠡⢂⠑⢄⢑⢐⠔⠨⠨⠠⠨⠨⡈⡂⠢⡈⡊⡺⣜⢵⢝⡜⢌⠆⡕⡜⡞⡮⢮⡳⣕⢽⡱⡕⢝⢐⠡⡑⠐⠄⠅⠈⡂⡂⢪⠃⠌⠌⠔⡐⢄⢑⠠⢂⠂⠅⠅⠅',
-'⠨⡐⠡⢂⢑⢐⠐⠄⢊⠌⠌⠌⠌⡂⡂⡊⢌⢐⢐⢐⠨⠪⡳⣕⣕⢕⢮⡫⡮⣫⣣⢳⠕⠕⡑⠨⡂⡢⠑⠈⠄⠄⠄⡂⡂⡊⠔⠨⠨⡈⡂⢂⢂⢂⠊⠐⠈⠌⠢⠡',
-'⠨⡂⢅⠕⡐⡐⠌⠌⠄⠌⢌⠊⠔⡐⡐⠨⢐⢐⠐⠔⠁⠁⠘⠸⢜⢕⠗⠵⡹⠨⠂⡡⢐⠑⠌⠈⠄⠄⠄⠄⠄⠠⡑⡐⡐⠄⠅⠁⠁⠄⠄⠄⠄⠄⢀⠈⠄⠄⠂⠁',
-'⠨⢌⠢⠑⠐⠈⠌⠊⠌⡂⡢⠡⢁⠢⡨⠨⠐⠄⠄⠄⠄⠄⠄⠈⢀⢁⢈⢈⠄⡢⠑⠈⠄⠄⠄⠄⠄⠄⠄⠄⠠⢁⢂⢂⠂⠅⢀⠐⠄⠐⠄⠁⠄⠁⠄⠄⠄⠁⢀⠄',
-'⠡⠁⠄⡀⠄⠠⠄⠐⠄⠄⡂⠁⢂⠑⢈⠈⢀⠄⠁⠄⠄⠄⠄⠄⠐⡐⢔⢐⠅⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⢂⢂⠂⠅⡁⠄⠄⠄⠄⠄⠄⠂⠄⠂⠁⠄⠁⠄⠄',
-'⠄⠂⠁⠄⠄⠄⡀⠠⠐⠄⠄⠄⠄⠠⠄⢀⠄⠄⠄⠄⠄⠄⠠⠄⠄⠪⡐⡐⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠐⢈⠂⠄⠄⠐⠄⠄⡀⠄⢀⠄⢀⠄⠄⠄⠐⠄',
-'⠄⠄⡀⠠⠄⠁⠄⠄⠄⠄⠄⠄⠐⠄⠄⡀⠄⡀⠄⠄⠄⠄⠄⠄⢄⢑⠐⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠠⠐⠄⠄⠈⠈⠄⠠⠐⠄⠄⠄⠄⠄⠄⠄⠄⠄⠠⠄',
-'⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠐⠄⠄⠁⠄⠄⠄⠄⠄⠄⠄⠄⠨⡐⠄⠁⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⢀⠄⠈⠄⠄⠂⠄⠄⠄⡀⠈⠄⠐⠄⠄⠂⠁⠄⠄',
-'⠄⠄⠈⠄⠐⠄⠄⠄⠄⡀⠄⠐⠄⠈⠄⠄⠄⠄⠄⠄⠄⠄⠁⢐⠐⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠂⠄⢀⠠⠄⠄⠄⠂⠄⠠⠄⠂⠁⠄⠄⠄⡀⠠⠄⠄⠄⠄⠄',
+db.custom_header = {
+	'⠄⠄⠠⠄⠄⠄⢐⢀⢳⡱⣝⢮⢯⡺⡝⡞⣎⢯⡚⡴⣕⢯⢣⡳⡝⡐⡰⡽⣕⢧⡊⢜⠱⡝⣕⢯⡳⣝⢵⡫⡮⡕⡫⣳⠽⡵⣕⠝⣎⢗⡝⡎⡣⡑⢌⠢⡑⡌⣞⢵',
+	'⠄⠂⢄⡡⣲⡪⡶⣝⢵⡫⣞⢵⡳⣍⢗⠵⣕⢗⢜⡞⡮⣫⢸⢎⢇⠢⣝⢞⢮⡳⣝⢖⡕⡨⢪⢣⢯⡺⣕⢯⡺⣝⢵⣱⡹⡜⢮⡫⣎⢞⢘⠔⡡⢊⠢⡑⢌⢢⢳⢝',
+	'⢀⡕⣗⢽⣪⢯⡺⡱⣕⣗⢽⢱⡪⡮⣫⢇⣗⢽⢕⢯⢎⣞⢼⢝⣕⢸⡪⣏⢗⣝⢮⡳⣝⢝⢌⠳⡳⣝⢮⡳⣝⢮⡳⣕⣇⢯⡣⡝⢮⡳⡔⠡⡊⢔⠡⡊⡂⡪⡳⣝',
+	'⡞⡮⣳⢝⡎⡧⡺⣝⢮⢮⢣⡳⣝⣝⢮⡳⡱⣕⢯⡳⣱⢳⢕⢝⡮⡢⡫⡮⣳⢳⡳⣝⢮⡫⡆⠅⡯⡮⡳⡝⡮⡳⣝⢮⡺⡔⡽⣝⢎⢮⡫⡮⡐⢅⠪⡐⢌⢢⡫⡮',
+	'⡯⡺⡕⢫⡪⡯⣝⢎⠇⠕⢵⢝⢮⢮⡳⣣⣳⡪⡳⣕⢵⣫⡳⣕⢝⡞⡎⡯⡮⡳⣝⢮⡳⣝⢐⢄⢯⡺⣝⡎⣞⣝⢮⡳⣝⣕⣝⢮⡫⣖⡝⡮⣎⠢⡑⢌⢢⡣⡯⣲',
+	'⢗⠑⡸⡵⣝⠞⢌⠢⠨⢨⢪⢫⣳⢳⢝⡎⠶⡙⡙⢌⢪⡺⡚⢎⢓⢍⢳⢜⢮⡫⡮⡳⢑⢐⢐⢸⢕⢯⡺⣜⢪⢮⡳⣝⢮⣲⢳⡳⣝⢮⡺⣜⢮⢇⡊⡦⡳⡝⡎⡮',
+	'⠁⡂⣗⣝⡎⡣⢁⠪⢨⢮⢱⣹⡪⣏⢗⠡⢑⢐⢈⠢⢘⠊⢌⢂⢂⠢⠊⡂⡢⢑⠝⡈⡂⠢⠂⠕⡙⡑⠝⡊⢧⡳⢝⢮⡳⡵⣕⢝⢮⡳⣝⢮⡪⣳⡣⡏⣗⠝⢄⢫',
+	'⠐⢸⡪⣞⡌⡢⡁⣪⢮⠑⡜⡲⡝⡜⠡⢊⠔⡐⡐⢌⠐⠌⡂⡂⠢⠡⡑⡐⡨⢐⢐⠄⡐⢅⢊⠔⡐⠌⠢⡈⠢⡑⠨⠡⡙⡚⢮⡳⡕⡯⡮⡳⣝⢜⡞⡜⣕⢵⢂⢑',
+	'⢈⠘⡮⡳⡝⢔⢰⢕⢧⢑⠌⠪⡐⠌⢌⠢⡑⡰⠐⠄⢅⢅⢐⠌⠌⡂⡂⡂⡢⢂⢂⠢⠨⡂⠆⢅⠢⡁⡑⠌⠢⠨⢐⠡⢂⠊⢔⠨⠺⡸⣪⢯⢮⢳⢝⡵⣪⡳⣅⠢',
+	'⠄⡂⢸⡝⢌⠂⣗⢽⡹⡐⠌⡂⠢⠡⢑⠨⠐⠐⠈⠌⡐⠰⡐⡅⡂⢂⠊⢔⠠⡁⡂⡊⠔⠨⡈⢂⠑⠨⠄⢅⠅⡑⢔⠈⠄⢕⠠⠡⡑⢱⡳⣝⠌⢜⡵⣝⢮⣺⢺⡌',
+	'⢀⠂⡑⢇⢑⢨⢮⢳⢕⠐⠅⠌⢌⠈⠠⡐⣔⠥⠌⢄⠈⢂⢞⢮⢮⠠⠑⠄⢅⢂⠢⠠⠁⡡⣐⢔⣐⠔⢌⢀⠨⠐⡡⢑⠅⡂⢅⢑⢌⡞⣞⢌⠌⡪⣞⢮⡳⣕⣗⣕',
+	'⢀⠂⡂⢂⢂⢯⡪⣝⢦⢑⠡⡁⠅⡐⢕⡽⡊⠄⠄⠄⡣⢂⡏⣗⢗⠨⡨⠨⢂⢐⢌⡠⣪⣺⠘⠁⡀⢟⢦⣑⢄⠈⡀⠅⡂⡂⠅⡜⣞⢮⡣⢂⡱⣝⢮⡳⢹⣪⡺⣜',
+	'⢐⠐⣐⣜⢶⢜⢜⢮⡳⡕⢰⠠⠄⢬⢜⡽⠠⡈⠄⡂⢽⢜⢞⣊⠣⡑⢄⢅⢵⡸⡼⣜⢮⠎⡀⠂⠠⢨⣳⡳⡅⡂⠄⢌⠂⠄⢕⢸⢕⣗⡕⠄⡯⡮⣳⠨⢸⡪⣞⢮',
+	'⢐⢨⡲⡵⡹⣸⢕⣝⢮⠣⡁⡯⡊⡮⣳⢽⢅⠪⡣⢢⢯⡫⡳⡵⣝⣜⢮⡳⡳⡝⣞⢮⡫⡇⡲⡨⡸⡸⣪⢞⡵⡡⢁⢆⠅⢅⠅⡪⡳⣕⢧⠡⡫⣞⢅⢊⢢⢯⢮⡳',
+	'⣔⢗⢝⣜⢮⢇⢧⡳⡑⢅⠂⣏⢗⣕⢝⠮⣳⢧⠮⡳⣳⡹⣕⢗⢜⣜⢞⣎⢯⡺⣪⡳⢽⢝⣌⣊⣔⢽⣪⢯⢞⣜⢮⢳⠨⡐⠌⢔⢯⢮⡫⠢⡹⣪⢂⠢⣕⢗⣗⢽',
+	'⡣⣞⢵⡳⡝⡼⡕⡂⡊⢄⢑⢸⢕⣗⢽⢕⢧⢖⢧⢯⡺⣜⢮⢪⡳⣕⢗⣕⢗⣝⢮⡺⣪⢕⣗⢕⣳⢹⢬⢎⡞⡮⡺⣕⠇⡢⣕⢽⢕⡗⡇⡑⡸⡵⡅⢕⢗⣝⢮⡳',
+	'⡯⡺⢕⠍⡜⡮⡂⠆⡊⡐⡐⡸⣕⢧⡳⣝⢵⡫⡳⣕⢗⢵⢝⢎⡺⣜⣕⢧⡳⣕⢗⡝⡮⡳⣕⢯⢮⢳⢕⣗⣝⠮⡫⣪⡺⡺⣪⠳⠝⠌⡂⢢⡪⣗⢽⠨⡳⣕⢗⡽',
+	'⢕⠕⡡⡮⣺⣸⢈⢂⢂⢂⢊⢸⡪⡳⣝⢮⢳⡹⡝⣎⣏⢗⢽⡱⣝⢮⡪⡧⡫⡮⣳⡹⡪⣏⢞⢮⡺⡭⡳⣕⠎⢌⢮⢺⠪⡩⠂⠅⢅⢑⢬⡺⣪⡳⣝⢵⡘⠮⡳⣝',
+	'⠐⡬⡳⡙⡊⡢⢑⠠⢂⢂⠢⢊⠪⡯⡺⣪⡳⡝⣞⢼⢬⣃⠃⠄⠄⡁⠑⠙⡱⢹⡸⡪⣏⢮⣫⡺⣪⡳⣝⢎⠌⡢⡫⢂⠅⡂⢅⢑⢔⣕⢗⣝⢞⢮⡳⡝⡎⠌⡪⢚',
+	'⠐⡝⢌⢐⠔⠨⡐⠨⡀⡂⡑⠄⢅⢙⢺⢜⢮⡫⣎⢗⣕⢗⡀⢀⠂⢄⠅⡂⡐⣜⢮⡫⡮⡳⣕⢝⢮⡺⣪⡣⡨⢂⠌⡐⡐⡐⠔⡸⣪⢮⡳⣕⠯⡳⢙⠌⡐⡁⡂⠅',
+	'⠨⡊⠔⡐⠌⢌⠐⢅⠢⡈⠢⢁⠢⠐⠄⢕⠱⡹⣪⡳⣕⢗⢥⠢⡑⡅⡣⡂⡮⡮⣳⢹⣪⢳⢕⣏⢗⢽⠸⠨⠐⡐⠌⠄⠢⡈⡢⡫⡎⠣⡑⢄⢑⠨⢐⢐⢐⠐⠄⠅',
+	'⠨⡐⠡⢂⠑⢄⢑⢐⠔⠨⠨⠠⠨⠨⡈⡂⠢⡈⡊⡺⣜⢵⢝⡜⢌⠆⡕⡜⡞⡮⢮⡳⣕⢽⡱⡕⢝⢐⠡⡑⠐⠄⠅⠈⡂⡂⢪⠃⠌⠌⠔⡐⢄⢑⠠⢂⠂⠅⠅⠅',
+	'⠨⡐⠡⢂⢑⢐⠐⠄⢊⠌⠌⠌⠌⡂⡂⡊⢌⢐⢐⢐⠨⠪⡳⣕⣕⢕⢮⡫⡮⣫⣣⢳⠕⠕⡑⠨⡂⡢⠑⠈⠄⠄⠄⡂⡂⡊⠔⠨⠨⡈⡂⢂⢂⢂⠊⠐⠈⠌⠢⠡',
+	'⠨⡂⢅⠕⡐⡐⠌⠌⠄⠌⢌⠊⠔⡐⡐⠨⢐⢐⠐⠔⠁⠁⠘⠸⢜⢕⠗⠵⡹⠨⠂⡡⢐⠑⠌⠈⠄⠄⠄⠄⠄⠠⡑⡐⡐⠄⠅⠁⠁⠄⠄⠄⠄⠄⢀⠈⠄⠄⠂⠁',
+	'⠨⢌⠢⠑⠐⠈⠌⠊⠌⡂⡢⠡⢁⠢⡨⠨⠐⠄⠄⠄⠄⠄⠄⠈⢀⢁⢈⢈⠄⡢⠑⠈⠄⠄⠄⠄⠄⠄⠄⠄⠠⢁⢂⢂⠂⠅⢀⠐⠄⠐⠄⠁⠄⠁⠄⠄⠄⠁⢀⠄',
+	'⠡⠁⠄⡀⠄⠠⠄⠐⠄⠄⡂⠁⢂⠑⢈⠈⢀⠄⠁⠄⠄⠄⠄⠄⠐⡐⢔⢐⠅⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⢂⢂⠂⠅⡁⠄⠄⠄⠄⠄⠄⠂⠄⠂⠁⠄⠁⠄⠄',
+	'⠄⠂⠁⠄⠄⠄⡀⠠⠐⠄⠄⠄⠄⠠⠄⢀⠄⠄⠄⠄⠄⠄⠠⠄⠄⠪⡐⡐⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠐⢈⠂⠄⠄⠐⠄⠄⡀⠄⢀⠄⢀⠄⠄⠄⠐⠄',
+	'⠄⠄⡀⠠⠄⠁⠄⠄⠄⠄⠄⠄⠐⠄⠄⡀⠄⡀⠄⠄⠄⠄⠄⠄⢄⢑⠐⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠠⠐⠄⠄⠈⠈⠄⠠⠐⠄⠄⠄⠄⠄⠄⠄⠄⠄⠠⠄',
+	'⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠐⠄⠄⠁⠄⠄⠄⠄⠄⠄⠄⠄⠨⡐⠄⠁⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⢀⠄⠈⠄⠄⠂⠄⠄⠄⡀⠈⠄⠐⠄⠄⠂⠁⠄⠄',
+	'⠄⠄⠈⠄⠐⠄⠄⠄⠄⡀⠄⠐⠄⠈⠄⠄⠄⠄⠄⠄⠄⠄⠁⢐⠐⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠂⠄⢀⠠⠄⠄⠄⠂⠄⠠⠄⠂⠁⠄⠄⠄⡀⠠⠄⠄⠄⠄⠄',
 }
 -- db.custom_header={
 -- '⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿',
@@ -369,20 +398,20 @@ db.custom_header= {
 -- }
 
 db.custom_center = {
-	{icon = '  ',
-		desc = 'Recently latest session                  ',
+	{ icon = '  ',
+		desc = 'Recently latest session                 ',
 		shortcut = 'SPC s l',
-		action ='SessionLoad'},
-	{icon = '  ',
+		action = 'SessionLoad' },
+	{ icon = '  ',
 		desc = 'Recently opened files                   ',
-		action =  'DashboardFindHistory',
-		shortcut = 'SPC f h'},
-	{icon = '  ',
+		action = 'DashboardFindHistory',
+		shortcut = 'SPC f h' },
+	{ icon = '  ',
 		desc = 'Find  File                              ',
 		action = 'Telescope find_files find_command=rg,--hidden,--files',
-		shortcut = 'SPC f f'},
-	{icon = '  ',
-		desc ='File Browser                            ',
-		action =  'Telescope file_browser',
-		shortcut = 'SPC f b'},
+		shortcut = 'SPC f f' },
+	{ icon = '  ',
+		desc = 'File Browser                            ',
+		action = 'Telescope file_browser',
+		shortcut = 'SPC f b' },
 }

@@ -4,7 +4,7 @@ packer.startup({function()
 	-- themes
 	use 'base16-project/base16-vim'
 	use 'LunarVim/horizon.nvim'
-	use 'B4mbus/oxocarbon-lua.nvim'
+	use 'sindrets/oxocarbon-lua.nvim'
 	-- plugins
 	use "nvim-telescope/telescope-file-browser.nvim"
 	use 'glepnir/dashboard-nvim'
@@ -35,6 +35,7 @@ packer.startup({function()
 		lock = true,
 		requires = {'kyazdani42/nvim-web-devicons'}
 	}
+	use 'nvim-treesitter/nvim-treesitter-context'
 	use 'nvim-treesitter/nvim-treesitter'
 	use {
     	'kyazdani42/nvim-tree.lua',

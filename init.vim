@@ -1,15 +1,16 @@
 set lazyredraw
 set tabstop=4
 set shiftwidth=4
-set softtabstop=0
+set softtabstop=-1
+set copyindent
 set guicursor=n-v-c:block-Cursor,i:block-iCursor
-set number
+set number relativenumber
 set mouse=a
 set nohlsearch
 set foldlevelstart=99
 set nofoldenable
 set sessionoptions+=globals
-set guifont=FiraCode\ NF:h12
+set guifont=Terminus:h12
 let mapleader = ";"
 " Keybindings
 " " Move with ijkl
@@ -17,6 +18,7 @@ map <Space> <insert>
 map i <Up>
 map j <Left>
 map k <Down>
+noremap <leader>; ;
 noremap <Space> i
 noremap h i <Esc>r
 " Netrw stuff
@@ -30,10 +32,12 @@ noremap h i <Esc>r
 " endfunction
 
 " " Jump to next word with ctrl+j/l
-noremap <C-l>	w
-noremap <C-j>	b
-noremap <C-i>	<C-u>
-noremap <C-k>	<C-d>
+nnoremap <C-l>	w
+nnoremap <C-j>	b
+" Hack for <C-i>
+nnoremap <C-i>	<C-u>
+nnoremap <Tab>	<C-u>
+nnoremap <C-k>	<C-d>
 inoremap <C-l>	<Esc>w
 inoremap <C-j>	<Esc>b
 inoremap <C-k>	<Esc>k
@@ -81,11 +85,19 @@ if (has("termguicolors"))
 endif
 
 syntax enable
-
+let g:use_clangd = 1
+" Lua init codes
+lua require('init')
 let g:oxocarbon_lua_disable_italic = 1
 colorscheme base16-dracula
 highlight Cursor guifg=none guibg=pink
 highlight iCursor guifg=none guibg=#99bbff
-
-" Lua init codes
-lua require('init')
+if $TERM != ''
+	highlight Normal guibg=none ctermbg=none
+	highlight NormalNc guibg=none ctermbg=none
+	highlight LineNr guibg=none ctermbg=none
+	highlight! StatusColumn guibg=none ctermbg=none
+	highlight! StatusLine guibg=none ctermbg=none
+	highlight! TabLine guibg=none ctermbg=none
+	highlight! TabLineFill guibg=none ctermbg=none
+endif
