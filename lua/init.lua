@@ -36,6 +36,27 @@ require('lualine').setup {
 	extensions = {}
 
 }
+-- TREESITTER
+vim.wo.foldmethod = 'expr'
+vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
+require 'nvim-treesitter.configs'.setup {
+	ensure_installed = { 'c', 'cpp', 'lua', 'cmake', 'rust' },
+	sync_install = true,
+	highlight = { enable = true },
+	indent = { enable = false }
+}
+
+require'treesitter-context'.setup{
+	enable = true,
+	patterns = {
+		default = {
+			'class',
+			'function',
+			'method'
+		}
+	}
+}
+
 -- LSP STUFF
 local capabs = vim.lsp.protocol.make_client_capabilities()
 capabs = require('cmp_nvim_lsp').default_capabilities(capabs)
@@ -167,29 +188,6 @@ lspconfig.lua_ls.setup {
 lspconfig.cmake.setup {
 	init_options = {
 		buildDirectory = '.cmakebuild'
-	}
-}
-
--- TREESITTER
-vim.wo.foldmethod = 'expr'
-vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
-require 'nvim-treesitter.configs'.setup {
-	ensure_installed = { 'c', 'cpp', 'lua', 'cmake', 'rust' },
-	sync_install = true,
-	highlight = {
-		enable = true,
-		additional_vim_regex_highlighting = false
-	},
-	indent = { enable = false }
-}
-require'treesitter-context'.setup{
-	enable = true,
-	patterns = {
-		default = {
-			'class',
-			'function',
-			'method'
-		}
 	}
 }
 
