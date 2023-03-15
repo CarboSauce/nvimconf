@@ -1,3 +1,4 @@
+lua pcall(require,'impatient')
 set lazyredraw
 set tabstop=4
 set shiftwidth=4
@@ -79,7 +80,6 @@ tnoremap <Esc> <C-\><C-n>
 
 lua require('plugins')
 " POST plugin download hooks
-lua require('impatient')
 if (has("termguicolors"))
   set termguicolors
 endif
@@ -92,10 +92,11 @@ let g:oxocarbon_lua_disable_italic = 1
 colorscheme base16-dracula
 highlight Cursor guifg=none guibg=pink
 highlight iCursor guifg=none guibg=#99bbff
-if $TERM != ''
+if !exists('g:neovide')
 	highlight Normal guibg=none ctermbg=none
 	highlight NormalNc guibg=none ctermbg=none
 	highlight LineNr guibg=none ctermbg=none
+	highlight SignColumn guibg=none ctermbg=none
 	highlight! StatusColumn guibg=none ctermbg=none
 	highlight! StatusLine guibg=none ctermbg=none
 	highlight! TabLine guibg=none ctermbg=none

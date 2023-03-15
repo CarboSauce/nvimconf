@@ -6,6 +6,9 @@ if exists('g:neovide')
 	let g:neovide_cursor_animation_length=0.04
 	let neovide_refresh_rate_idle=0
 	finish
+else
+	" reload colorscheme on nvim-qt
+	colorscheme	base16-dracula
 endif
 
 " Disable GUI Tabline

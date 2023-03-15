@@ -7,7 +7,11 @@ packer.startup({function()
 	use 'sindrets/oxocarbon-lua.nvim'
 	-- plugins
 	use "nvim-telescope/telescope-file-browser.nvim"
-	use 'glepnir/dashboard-nvim'
+	use {
+		'glepnir/dashboard-nvim',
+		event = 'VimEnter',
+		requires = {'nvim-tree/nvim-web-devicons'}
+	}
 	use 'stevearc/dressing.nvim'
 	use 'lewis6991/impatient.nvim'
 	use 'wbthomason/packer.nvim'
