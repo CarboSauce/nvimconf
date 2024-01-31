@@ -1,11 +1,23 @@
 -- General configs
-vim.api.nvim_create_user_command('Fmt', vim.lsp.buf.formatting, { nargs = 0 })
-vim.api.nvim_create_user_command('Fmtrange', vim.lsp.buf.range_formatting, { nargs = 0 })
-vim.api.nvim_create_user_command('Impl', vim.lsp.buf.definition, { nargs = 0 })
-vim.api.nvim_create_user_command('Rename', function() vim.lsp.buf.rename() end, { nargs = 0 })
-vim.api.nvim_create_user_command('Hover', vim.lsp.buf.hover, { nargs = 0 })
-vim.api.nvim_create_user_command('Codeaction', vim.lsp.buf.code_action, { nargs = 0 })
-vim.api.nvim_create_user_command('Diag', vim.diagnostic.open_float, { nargs = 0 })
+vim.api.nvim_create_user_command('Fmt', function() vim.lsp.buf.format() end, { nargs = 0 })
+vim.api.nvim_create_user_command('Impl',function() vim.lsp.buf.definition() end, { nargs = 0 })
+vim.api.nvim_create_user_command('Rename',function() vim.lsp.buf.rename() end, { nargs = 0 })
+vim.api.nvim_create_user_command('Hover',function() vim.lsp.buf.hover() end, { nargs = 0 })
+vim.api.nvim_create_user_command('Codeaction',function() vim.lsp.buf.code_action() end, { nargs = 0 })
+vim.api.nvim_create_user_command('Diag',function() vim.diagnostic.open_float() end, { nargs = 0 })
+vim.api.nvim_create_user_command( -- Lua Exec
+  'Le',
+  function(args)
+    vim.api.nvim_exec([[pu=execute('lua ]] .. args.args ..  [[')]], false)
+  end,
+  { nargs = '*' }
+)
+
+-- Bufdelete stuff
+local bd = require 'bufdelete'
+vim.keymap.set('n','<leader>bd',function ()
+	bd.bufdelete(0,false)
+end,{silent=true, noremap=true} )
 -- LUA LINE
 require('lualine').setup {
 	options = {
@@ -82,11 +94,18 @@ function cxx_root_dir()
 	return util.root_pattern(unpack(root_files))(vim.fn.getcwd())
 end
 
+--capabs.textDocument.completion.completionItem.snippetSupport=true
+lspconfig.emmet_ls.setup{
+}
+lspconfig.angularls.setup{}
+
+-- lspconfig.asm_lsp.setup{}
+
 if vim.g.use_clangd then
 	lspconfig.clangd.setup {
 		cmd = {
 			"clangd", 
-			"--compile-commands-dir=./.cmakebuild",
+			"--compile-commands-dir=./build",
 			"--background-index", "--clang-tidy",
 			"--enable-config"
 		},
@@ -135,38 +154,9 @@ lspconfig.rust_analyzer.setup {
 	}
 }
 
+-- TYPESCRIPT
+lspconfig.tsserver.setup {}
 
--- SUMNEKO LSP
--- reference: https://jdhao.github.io/2021/08/12/nvim_sumneko_lua_conf/
--- local sumneko_binary_path = vim.fn.exepath('lua-language-server')
--- -- TODO: Idk if :h paremeter is enough to make stuff work on linux
--- -- i tested it only on windows
--- local sumneko_root_path = vim.fn.fnamemodify(sumneko_binary_path, ':h')
--- 
--- local runtime_path = vim.split(package.path, ';')
--- table.insert(runtime_path, "lua/?.lua")
--- table.insert(runtime_path, "lua/?/init.lua")
--- 
--- lspconfig.lua_ls.setup {
--- 	cmd = { sumneko_binary_path, "-E", sumneko_root_path .. "/main.lua" };
--- 	settings = {
--- 		Lua = {
--- 			runtime = {
--- 				version = 'LuaJIT',
--- 				path = runtime_path,
--- 			},
--- 			diagnostics = {
--- 				globals = { 'vim' },
--- 			},
--- 			workspace = {
--- 				library = vim.api.nvim_get_runtime_file("", true),
--- 			},
--- 			telemetry = {
--- 				enable = false,
--- 			},
--- 		},
--- 	},
--- }
 lspconfig.lua_ls.setup {
 	settings = {
 		Lua = {
@@ -305,12 +295,12 @@ require('nvim-autopairs').setup {
 local tsa = require 'telescope.actions'
 require('telescope').setup {
 	defaults = {
-		mappings = {
-			n = {
-				["k"] = tsa.move_selection_next,
-				["i"] = tsa.move_selection_previous
-			}
-		},
+		-- mappings = {
+		-- 	n = {
+		-- 		["k"] = tsa.move_selection_next,
+		-- 		["i"] = tsa.move_selection_previous
+		-- 	}
+		-- },
 		preview = {
 			hide_on_startup = true
 		}
@@ -365,4 +355,5 @@ require 'dashboard'.setup {
 		tabline = true,
 		winbar = true,
 	}
+
 }

@@ -2,9 +2,9 @@ local packer = require('packer')
 local use = packer.use
 packer.startup({function()
 	-- themes
-	use 'base16-project/base16-vim'
+	use 'lunacookies/vim-colors-xcode'
+	use 'RRethy/nvim-base16'
 	use 'LunarVim/horizon.nvim'
-	use 'sindrets/oxocarbon-lua.nvim'
 	-- plugins
 	use "nvim-telescope/telescope-file-browser.nvim"
 	use {
@@ -12,6 +12,7 @@ packer.startup({function()
 		event = 'VimEnter',
 		requires = {'nvim-tree/nvim-web-devicons'}
 	}
+	use 'famiu/bufdelete.nvim'
 	use 'stevearc/dressing.nvim'
 	use 'lewis6991/impatient.nvim'
 	use 'wbthomason/packer.nvim'

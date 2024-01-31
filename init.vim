@@ -1,4 +1,5 @@
 lua pcall(require,'impatient')
+set listchars=tab:▸\ ,extends:❯,precedes:❮,nbsp:␣
 set lazyredraw
 set tabstop=4
 set shiftwidth=4
@@ -15,13 +16,14 @@ set guifont=Terminus:h12
 let mapleader = ";"
 " Keybindings
 " " Move with ijkl
-map <Space> <insert>
-map i <Up>
-map j <Left>
-map k <Down>
+" map <Space> <insert>
+" map i <Up>
+" map j <Left>
+" map k <Down>
+" noremap h i <Esc>r
 noremap <leader>; ;
-noremap <Space> i
-noremap h i <Esc>r
+noremap ; <Nop>
+" noremap <Space> i
 " Netrw stuff
 " augroup netrw_mapping
 "     autocmd!
@@ -34,20 +36,20 @@ noremap h i <Esc>r
 
 " " Jump to next word with ctrl+j/l
 nnoremap <C-l>	w
-nnoremap <C-j>	b
+nnoremap <C-h>	b
 " Hack for <C-i>
-nnoremap <C-i>	<C-u>
-nnoremap <Tab>	<C-u>
-nnoremap <C-k>	<C-d>
+nnoremap <C-k>	<C-u>
+" nnoremap <Tab>	<C-u>
+nnoremap <C-j>	<C-d>
 inoremap <C-l>	<Esc>w
-inoremap <C-j>	<Esc>b
+inoremap <C-h>	<Esc>b
 inoremap <C-k>	<Esc>k
 " " Line swapping
-nnoremap <silent> <M-i> :m-2<CR>==
-nnoremap <silent> <M-k> :m+1<CR>==
-vnoremap <silent> <M-k> :m '>+1<CR>gv=gv
-vnoremap <silent> <M-i> :m '<-2<CR>gv=gv
-noremap <silent> <M-j> J
+nnoremap <silent> <M-k> :m-2<CR>==
+nnoremap <silent> <M-j> :m+1<CR>==
+vnoremap <silent> <M-j> :m '>+1<CR>gv=gv
+vnoremap <silent> <M-k> :m '<-2<CR>gv=gv
+" noremap <silent> <M-j> J
 
 " " Map save to Ctrl+S
 noremap <silent> <C-S>          :update<CR>
@@ -61,12 +63,12 @@ vnoremap <leader>P "+P
 nnoremap <leader>p "+p
 nnoremap <leader>P "+P
 " " Move to next buffer
-noremap <silent> <S-j> 	:bp<CR>
+noremap <silent> <S-h> 	:bp<CR>
 noremap <silent> <S-l> 	:bn<CR>
 " " Move through windows
-noremap <silent> <C-w>k <C-w>j
-noremap <silent> <C-w>i <C-w>k
-noremap <silent> <C-w>j <C-w>h
+" noremap <silent> <C-w>k <C-w>j
+" noremap <silent> <C-w>i <C-w>k
+" noremap <silent> <C-w>j <C-w>h
 
 " " Change dir to current file's dir 
 nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
@@ -88,8 +90,8 @@ syntax enable
 let g:use_clangd = 1
 " Lua init codes
 lua require('init')
-let g:oxocarbon_lua_disable_italic = 1
-colorscheme base16-dracula
+
+colorscheme xcodedarkhc
 highlight Cursor guifg=none guibg=pink
 highlight iCursor guifg=none guibg=#99bbff
 if !exists('g:neovide')
