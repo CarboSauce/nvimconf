@@ -1,4 +1,3 @@
-lua pcall(require,'impatient')
 set listchars=tab:▸\ ,extends:❯,precedes:❮,nbsp:␣
 set lazyredraw
 set tabstop=4
@@ -15,24 +14,8 @@ set sessionoptions+=globals
 set guifont=Terminus:h12
 let mapleader = ";"
 " Keybindings
-" " Move with ijkl
-" map <Space> <insert>
-" map i <Up>
-" map j <Left>
-" map k <Down>
-" noremap h i <Esc>r
 noremap <leader>; ;
 noremap ; <Nop>
-" noremap <Space> i
-" Netrw stuff
-" augroup netrw_mapping
-"     autocmd!
-"     autocmd filetype netrw call NetrwMapping()
-" augroup END
-" 
-" function! NetrwMapping()
-"     noremap <buffer> i k 
-" endfunction
 
 " " Jump to next word with ctrl+j/l
 nnoremap <C-l>	w
@@ -65,11 +48,6 @@ nnoremap <leader>P "+P
 " " Move to next buffer
 noremap <silent> <S-h> 	:bp<CR>
 noremap <silent> <S-l> 	:bn<CR>
-" " Move through windows
-" noremap <silent> <C-w>k <C-w>j
-" noremap <silent> <C-w>i <C-w>k
-" noremap <silent> <C-w>j <C-w>h
-
 " " Change dir to current file's dir 
 nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
 nnoremap <leader>lcd :tcd %:p:h<CR>:pwd<CR>
@@ -103,4 +81,5 @@ if !exists('g:neovide')
 	highlight! StatusLine guibg=none ctermbg=none
 	highlight! TabLine guibg=none ctermbg=none
 	highlight! TabLineFill guibg=none ctermbg=none
+	highlight! EndOfBuffer guibg=none ctermbg=none
 endif

@@ -1,59 +1,60 @@
-local packer = require('packer')
-local use = packer.use
-packer.startup({function()
-	-- themes
-	use 'lunacookies/vim-colors-xcode'
-	use 'RRethy/nvim-base16'
-	use 'LunarVim/horizon.nvim'
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "--depth=1",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable",
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+require("lazy").setup({
+	{ 'lunacookies/vim-colors-xcode' },
+	{ 'RRethy/nvim-base16' },
+	{ 'LunarVim/horizon.nvim' },
 	-- plugins
-	use "nvim-telescope/telescope-file-browser.nvim"
-	use {
+	{ "nvim-telescope/telescope-file-browser.nvim" },
+	{
 		'glepnir/dashboard-nvim',
 		event = 'VimEnter',
-		requires = {'nvim-tree/nvim-web-devicons'}
-	}
-	use 'famiu/bufdelete.nvim'
-	use 'stevearc/dressing.nvim'
-	use 'lewis6991/impatient.nvim'
-	use 'wbthomason/packer.nvim'
-	use 'neovim/nvim-lspconfig'
-	use 'hrsh7th/nvim-cmp'
-	use 'hrsh7th/cmp-nvim-lsp'
-	use 'saadparwaiz1/cmp_luasnip'
-	use 'L3MON4D3/LuaSnip'
-	use {
-		'ilyachur/cmake4vim',
-		disable = true
-	}
-	use 'Shatur/neovim-cmake'
-	use 'mfussenegger/nvim-dap'
-	use 'windwp/nvim-autopairs'
-	use {
+		dependencies = {'nvim-tree/nvim-web-devicons'}
+	},
+	'famiu/bufdelete.nvim',
+	'stevearc/dressing.nvim',
+	'wbthomason/packer.nvim',
+	'neovim/nvim-lspconfig',
+	'hrsh7th/nvim-cmp',
+	'hrsh7th/cmp-nvim-lsp',
+	'saadparwaiz1/cmp_luasnip',
+	'L3MON4D3/LuaSnip',
+	'Shatur/neovim-cmake',
+	'mfussenegger/nvim-dap',
+	'windwp/nvim-autopairs',
+	{
 		'nvim-telescope/telescope.nvim',
-		requires = {'nvim-lua/plenary.nvim'}
-	}
-	use {
-		'akinsho/toggleterm.nvim', tag = 'v2.*', opt = false
-	}
-	use {
+		dependencies = {'nvim-lua/plenary.nvim'}
+	},
+	{
+		'akinsho/toggleterm.nvim', version = '*'
+	},
+	{
 		'akinsho/bufferline.nvim',
-		lock = true,
-		requires = {'kyazdani42/nvim-web-devicons'}
-	}
-	use 'nvim-treesitter/nvim-treesitter-context'
-	use 'nvim-treesitter/nvim-treesitter'
-	use {
+		version = '*',
+		dependencies = {'kyazdani42/nvim-web-devicons'}
+	},
+	'nvim-treesitter/nvim-treesitter-context',
+	'nvim-treesitter/nvim-treesitter',
+	{
     	'kyazdani42/nvim-tree.lua',
-    	requires = {'kyazdani42/nvim-web-devicons', opt = true},
-	}
-	use {
+    	dependencies = {'kyazdani42/nvim-web-devicons'},
+	},
+	{
 		'nvim-lualine/lualine.nvim',
-		requires = { 'kyazdani42/nvim-web-devicons', opt = true}
+    	dependencies = {'kyazdani42/nvim-web-devicons'},
 	}
-	end,
-	config = {
-		display = {
-			open_fn = require'packer.util'.float
-		}
-	}
+
 })
