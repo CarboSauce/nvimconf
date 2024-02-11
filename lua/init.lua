@@ -12,6 +12,11 @@ vim.api.nvim_create_user_command( -- Lua Exec
   end,
   { nargs = '*' }
 )
+vim.keymap.set(
+	'n',
+	'<leader>qf',
+	function() require('trouble').toggle() end
+)
 
 -- Bufdelete stuff
 local bd = require 'bufdelete'

@@ -13,6 +13,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+	{ import = "configs" },
 	{ 'lunacookies/vim-colors-xcode' },
 	{ 'RRethy/nvim-base16' },
 	{ 'LunarVim/horizon.nvim' },

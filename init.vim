@@ -1,5 +1,4 @@
 set listchars=tab:▸\ ,extends:❯,precedes:❮,nbsp:␣
-set lazyredraw
 set tabstop=4
 set shiftwidth=4
 set softtabstop=-1
