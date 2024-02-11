@@ -1,3 +1,6 @@
+if exists('g:vscode')
+	finish
+endif
 set listchars=tab:▸\ ,extends:❯,precedes:❮,nbsp:␣
 set tabstop=4
 set shiftwidth=4
@@ -11,14 +14,14 @@ set foldlevelstart=99
 set nofoldenable
 set sessionoptions+=globals
 set guifont=Terminus:h12
+if (has("termguicolors"))
+  set termguicolors
+endif
 let mapleader = ";"
 " Keybindings
 noremap <leader>; ;
 noremap ; <Nop>
 
-" " Jump to next word with ctrl+j/l
-nnoremap <C-l>	w
-nnoremap <C-h>	b
 " Hack for <C-i>
 nnoremap <C-k>	<C-u>
 " nnoremap <Tab>	<C-u>
@@ -57,14 +60,7 @@ tnoremap <Esc> <C-\><C-n>
 " nnoremap <silent><c-/> <Cmd>exe v:count1 . "ToggleTerm direction=float"<CR>
 " inoremap <silent><c-/> <Esc><Cmd>exe v:count1 . "ToggleTerm direction=float"<CR>
 
-lua require('plugins')
-" POST plugin download hooks
-if (has("termguicolors"))
-  set termguicolors
-endif
-
-syntax enable
-let g:use_clangd = 1
+" let g:use_clangd = 1
 " Lua init codes
 lua require('init')
 
