@@ -4,6 +4,7 @@ function setupLspConfigs()
 	local lspconfig = require 'lspconfig'
 	local util = require 'lspconfig.util'
 	local path = require 'plenary.path'
+
 	vim.diagnostic.config {
 		virtual_text = false,
 		signs = true,
@@ -35,10 +36,15 @@ function setupLspConfigs()
 		cmd = {
 			"clangd", 
 			"--compile-commands-dir=./build",
+			"--completion-style=detailed",
+			"--header-insertion=never",
+			"--header-insertion-decorators",
+			"--all-scopes-completion",
 			"--background-index", "--clang-tidy",
 			"--enable-config"
 		},
 		capabilities = capabs,
+		on_attach = on_attach,
 		root_dir = cxx_root_dir
 	}
 	-- else
@@ -113,7 +119,8 @@ end
 return {
 	'neovim/nvim-lspconfig',
 	dependencies = {
-		'hrsh7th/cmp-nvim-lsp'
+		'hrsh7th/cmp-nvim-lsp',
+		'Issafalcon/lsp-overloads.nvim'
 	},
 	config = setupLspConfigs
 }

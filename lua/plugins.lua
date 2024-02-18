@@ -122,4 +122,13 @@ require("lazy").setup({
 			}
 		}
 	},
+	{
+		"ray-x/lsp_signature.nvim",
+		version = '*',
+		config = function()
+			require 'lsp_signature'.setup({
+				select_signature_key = '<C-s>'
+			})
+		end
+	}
 })
