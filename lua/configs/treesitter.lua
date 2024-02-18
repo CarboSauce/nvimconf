@@ -10,7 +10,8 @@ return {
 				'lua',
 				'cmake',
 				'rust',
-				'typescript'
+				'typescript',
+				'tsx'
 			},
 			sync_install = true,
 			highlight = { enable = true },
@@ -22,7 +23,8 @@ return {
 				enable_close_on_slash = true,
 				filetypes = {
 					"html",
-					"typescriptreact"
+					"typescriptreact",
+					"javascriptreact"
 				}
 			},
 		}
