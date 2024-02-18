@@ -82,7 +82,7 @@ require("lazy").setup({
 			},
 			extensions = {
 				file_browser = {
-					hijack_netrw = true
+					hijack_netrw = false
 				}
 			}
 		}
@@ -133,5 +133,14 @@ require("lazy").setup({
 				select_signature_key = '<C-s>'
 			})
 		end
+	},
+	{
+		'stevearc/oil.nvim',
+		config = function()
+			local oil = require 'oil'
+
+			oil.setup()
+		end
+
 	}
 })
