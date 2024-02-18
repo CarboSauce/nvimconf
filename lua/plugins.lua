@@ -124,5 +124,14 @@ require("lazy").setup({
 	},
 	{
 		'windwp/nvim-ts-autotag',
+	},
+	{
+		"ray-x/lsp_signature.nvim",
+		version = '*',
+		config = function()
+			require 'lsp_signature'.setup({
+				select_signature_key = '<C-s>'
+			})
+		end
 	}
 })
