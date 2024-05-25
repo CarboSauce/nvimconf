@@ -110,6 +110,21 @@ require("lazy").setup({
 		}
 	},
 	{
+		'JoosepAlviste/nvim-ts-context-commentstring',
+		config = function()
+			local get_option = vim.filetype.get_option
+			vim.filetype.get_option = function(filetype, option)
+				return option == "commentstring"
+				and require("ts_context_commentstring.internal").calculate_commentstring()
+				or get_option(filetype, option)
+			end
+			vim.g.skip_ts_context_commentstring_module = true
+			require('ts_context_commentstring').setup {
+				enable_autocmd = false,
+			}
+		end,
+	},
+	{
 		'nvim-treesitter/nvim-treesitter-context',
 		opts = {
 			enable = true,
