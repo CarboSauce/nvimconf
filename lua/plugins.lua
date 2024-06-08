@@ -158,4 +158,9 @@ require("lazy").setup({
 		end
 
 	}
+},
+{
+	change_detection = {
+		enabled = false
+	}
 })

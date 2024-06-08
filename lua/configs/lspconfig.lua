@@ -34,7 +34,7 @@ function setupLspConfigs()
 	-- if vim.g.use_clangd then
 	lspconfig.clangd.setup {
 		cmd = {
-			"clangd", 
+			"clangd",
 			"--compile-commands-dir=./build",
 			"--completion-style=detailed",
 			"--header-insertion=never",

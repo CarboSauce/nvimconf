@@ -11,6 +11,11 @@ return {
 				section_separators = { left = '│', right = '│' },
 				disabled_filetypes = {},
 				always_divide_middle = true,
+				refresh = {
+					statusline = 0,
+					tabline = 0,
+					winbar = 0,
+				}
 			},
 			sections = {
 				lualine_a = { 'mode' },
