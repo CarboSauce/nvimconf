@@ -16,17 +16,6 @@ return {
 			sync_install = true,
 			highlight = { enable = true },
 			indent = { enable = false },
-			autotag = {
-				enable = true,
-				enable_rename = true,
-				enable_close = true,
-				enable_close_on_slash = true,
-				filetypes = {
-					"html",
-					"typescriptreact",
-					"javascriptreact"
-				}
-			},
 		}
 	end
 }

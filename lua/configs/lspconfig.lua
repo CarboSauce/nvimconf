@@ -25,11 +25,8 @@ function setupLspConfigs()
 	end
 
 	--capabs.textDocument.completion.completionItem.snippetSupport=true
-	lspconfig.emmet_ls.setup{
+	lspconfig.emmet_language_server.setup{
 	}
-	lspconfig.angularls.setup{}
-
-	-- lspconfig.asm_lsp.setup{}
 
 	-- if vim.g.use_clangd then
 	lspconfig.clangd.setup {
@@ -89,7 +86,7 @@ function setupLspConfigs()
 	}
 
 	-- TYPESCRIPT
-	lspconfig.tsserver.setup {}
+	lspconfig.ts_ls.setup {}
 
 	lspconfig.lua_ls.setup {
 		settings = {

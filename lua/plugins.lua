@@ -139,6 +139,9 @@ require("lazy").setup({
 	},
 	{
 		'windwp/nvim-ts-autotag',
+		config = function()
+			require 'nvim-ts-autotag'.setup({})
+		end
 	},
 	{
 		"ray-x/lsp_signature.nvim",
@@ -157,7 +160,16 @@ require("lazy").setup({
 			oil.setup()
 		end
 
+	},
+	{
+		"seblyng/roslyn.nvim",
+		ft = "cs",
+		-- @module 'roslyn.config'
+		-- @type RoslynNvimConfig
+		opts = {
+		}
 	}
+
 },
 {
 	change_detection = {
