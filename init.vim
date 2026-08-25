@@ -13,7 +13,6 @@ set nohlsearch
 set foldlevelstart=99
 set nofoldenable
 set sessionoptions+=globals
-set guifont=Terminus:h12
 if (has("termguicolors"))
   set termguicolors
 endif

@@ -15,6 +15,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
 	{ import = "configs" },
 	{ 'lunacookies/vim-colors-xcode' },
+	{ 'nyoom-engineering/oxocarbon.nvim', build = false },
 	{ 'RRethy/nvim-base16' },
 	{ 'LunarVim/horizon.nvim' },
 	-- plugins
@@ -45,17 +46,6 @@ require("lazy").setup({
 		opts = {
 			use_default_keymaps = false,
 			max_join_length = 150
-		}
-	},
-	{ 
-		'Shatur/neovim-cmake',
-		opts = {
-			build_dir = function()
-				return vim.fn.getcwd() .. '/.cmakebuild'
-			end,
-			parameters_file = '.cmakebuild/neovim.json',
-			configure_args = { '-D', 'CMAKE_EXPORT_COMPILE_COMMANDS=1', '-G', 'Ninja Multi-Config' },
-			copy_compile_commands = false
 		}
 	},
 	'mfussenegger/nvim-dap',
@@ -144,32 +134,12 @@ require("lazy").setup({
 		end
 	},
 	{
-		"ray-x/lsp_signature.nvim",
-		version = '*',
-		config = function()
-			require 'lsp_signature'.setup({
-				select_signature_key = '<C-s>'
-			})
-		end
-	},
-	{
 		'stevearc/oil.nvim',
 		config = function()
 			local oil = require 'oil'
-
 			oil.setup()
 		end
-
 	},
-	{
-		"seblyng/roslyn.nvim",
-		ft = "cs",
-		-- @module 'roslyn.config'
-		-- @type RoslynNvimConfig
-		opts = {
-		}
-	}
-
 },
 {
 	change_detection = {

@@ -3,7 +3,7 @@ return {
 	config = function()
 		vim.wo.foldmethod = 'expr'
 		vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
-		require 'nvim-treesitter.configs'.setup {
+		require 'nvim-treesitter'.setup {
 			ensure_installed = {
 				'c',
 				'cpp',

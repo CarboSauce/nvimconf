@@ -1,9 +1,12 @@
 function setupLspConfigs()
-	local capabs = vim.lsp.protocol.make_client_capabilities()
-	capabs = require('cmp_nvim_lsp').default_capabilities(capabs)
-	local lspconfig = require 'lspconfig'
+	--local lspconfig = require 'lspconfig'
 	local util = require 'lspconfig.util'
 	local path = require 'plenary.path'
+
+	function lspConfig(server, config) 
+		vim.lsp.config(server, config)
+		vim.lsp.enable(server)
+	end
 
 	vim.diagnostic.config {
 		virtual_text = false,
@@ -13,7 +16,7 @@ function setupLspConfigs()
 		severity_sort = false
 	}
 	-- CCLS CONFIG
-	root_files = {
+	local root_files = {
 		'.clang-format',
 		'CMakeLists.txt',
 		'Makefile',
@@ -23,13 +26,9 @@ function setupLspConfigs()
 	function cxx_root_dir()
 		return util.root_pattern(unpack(root_files))(vim.fn.getcwd())
 	end
-
-	--capabs.textDocument.completion.completionItem.snippetSupport=true
-	lspconfig.emmet_language_server.setup{
-	}
-
+	
 	-- if vim.g.use_clangd then
-	lspconfig.clangd.setup {
+	lspConfig('clangd', {
 		cmd = {
 			"clangd",
 			"--compile-commands-dir=./build",
@@ -40,31 +39,10 @@ function setupLspConfigs()
 			"--background-index", "--clang-tidy",
 			"--enable-config"
 		},
-		capabilities = capabs,
-		on_attach = on_attach,
 		root_dir = cxx_root_dir
-	}
-	-- else
-	-- 	lspconfig.ccls.setup {
-	-- 		init_options = {
-	-- 			cache = {
-	-- 				directory = ".cmakebuild/ccls"
-	-- 			},
-	-- 			compilationDatabaseDirectory = ".cmakebuild",
-	-- 			completion = {
-	-- 				placeholder = false
-	-- 			},
-	-- 			highlight = {
-	-- 				lsRanges = true
-	-- 			},
-	-- 		},
-	-- 		root_dir = cxx_root_dir,
-	-- 		capabilities = capabs,
-	-- 		single_file_support = true
-	-- 	}
-	-- end
+	})
 	-- RUST ANALYZER
-	lspconfig.rust_analyzer.setup {
+	lspConfig('rust_analyzer', {
 		settings = {
 			["rust-analyzer"] = {
 				imports = {
@@ -83,41 +61,42 @@ function setupLspConfigs()
 				}
 			}
 		}
-	}
+	})
 
 	-- TYPESCRIPT
-	lspconfig.ts_ls.setup {}
+	lspConfig('ts_ls', {})
 
-	lspconfig.lua_ls.setup {
+	lspConfig('emmylua_ls', {
+		cmd = {'emmylua_ls'},
+		filetypes = { 'lua' },
+		root_markers = { {'.emmyrc.json', '.luarc.json' }, '.git' },
 		settings = {
-			Lua = {
-				runtime = {
-					version = 'LuaJIT',
-				},
+			emmylua = {
 				diagnostics = {
-					globals = { 'vim' },
+					enable = true,
+					globals = { 'vim' }
+				},
+				runtime = {
+					version = 'LuaJIT'
 				},
 				workspace = {
-					library = vim.api.nvim_get_runtime_file("", true),
-				},
-				telemetry = {
-					enable = false,
-				},
+					library = vim.api.nvim_get_runtime_file("",true),
+					checkThirdParty = false
+				}
 			},
-		},
-	}
-	lspconfig.cmake.setup {
+		}
+	})
+	
+	lspConfig('cmake', {
 		init_options = {
 			buildDirectory = '.cmakebuild'
 		}
-	}
+	})
+
+	
 end
 
 return {
 	'neovim/nvim-lspconfig',
-	dependencies = {
-		'hrsh7th/cmp-nvim-lsp',
-		'Issafalcon/lsp-overloads.nvim'
-	},
 	config = setupLspConfigs
 }
