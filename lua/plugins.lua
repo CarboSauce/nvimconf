@@ -53,8 +53,8 @@ require("lazy").setup({
 		'windwp/nvim-autopairs',
 		opts = {
 			fast_wrap = {
+			    map = '<esc>e',
 				chars = { '<','{', '[', '(', '"', "'" },
-				map = '<M-e>',
 				end_key = ')'
 			}
 		}
