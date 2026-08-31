@@ -136,10 +136,28 @@ require("lazy").setup({
 	{
 		'stevearc/oil.nvim',
 		config = function()
-			local oil = require 'oil'
-			oil.setup()
+			require 'oil'.setup()
 		end
 	},
+    {
+        'MagicDuck/grug-far.nvim',
+        config = function()
+            require'grug-far'.setup({
+
+            })
+        end
+    },
+    {
+        'neogitorg/neogit',
+        lazy = true,
+        cmd = "Neogit",
+        dependencies = {
+            'sindrets/diffview.nvim'
+        },
+        keys = {
+            { '<leader>gg', '<cmd>Neogit<cr>', desc = 'Show Neogit UI' }
+        }
+    }
 },
 {
 	change_detection = {

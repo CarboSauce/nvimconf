@@ -18,6 +18,7 @@ vim.o.expandtab=true
 --vim.o.sessionoptions=globals
 vim.o.termguicolors=true
 vim.g.mapleader=';'
+vim.g.maplocalleader=';'
 vim.keymap.set('n','<leader>;', ';')
 vim.keymap.set('n',';','<Nop>')
 
