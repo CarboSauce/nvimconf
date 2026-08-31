@@ -157,6 +157,20 @@ require("lazy").setup({
         keys = {
             { '<leader>gg', '<cmd>Neogit<cr>', desc = 'Show Neogit UI' }
         }
+    },
+    {
+        'marc0x71/mesone.nvim',
+        lazy = true,
+        cmd = 'Mesone',
+        opts = {
+            build_folder = 'build',
+            build_type = 'debugoptimized',
+            dap_adapter = 'gdb',
+            show_command_logs = false,
+            auto_compile = true,
+            auto_close_terminal = false,
+            compile_before_run = false
+        }
     }
 },
 {

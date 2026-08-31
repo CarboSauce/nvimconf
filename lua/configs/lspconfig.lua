@@ -41,6 +41,7 @@ function setupLspConfigs()
 		},
 		root_dir = cxx_root_dir
 	})
+	lspConfig('mesonlsp', {})
 	-- RUST ANALYZER
 	lspConfig('rust_analyzer', {
 		settings = {
