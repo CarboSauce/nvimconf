@@ -9,8 +9,17 @@ vim.api.nvim_create_user_command('Diag',function() vim.diagnostic.open_float() e
 vim.keymap.set(
 	'n',
 	'<leader>qf',
-	function() require('trouble').toggle() end
+	function() require('trouble').toggle() end,
+    { desc = 'Quick fix'}
 )
+
+vim.keymap.set(
+	'n',
+	'<leader>tf',
+    '<cmd>Telescope file_browser<CR>',
+	{noremap = true, desc = 'Telescope file browser'}
+)
+
 
 vim.keymap.set(
     'i',
@@ -22,4 +31,4 @@ vim.keymap.set(
 -- Bufdelete stuff
 vim.keymap.set('n','<leader>bd',function ()
 	require('bufdelete').bufdelete(0,false)
-end,{silent=true, noremap=true} )
+end,{silent=true, noremap=true, desc = 'Bufdelete'} )

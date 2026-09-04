@@ -41,7 +41,7 @@ function setupLspConfigs()
 		},
 		root_dir = cxx_root_dir
 	})
-	lspConfig('mesonlsp', {})
+    vim.lsp.enable('mesonlsp')
 	-- RUST ANALYZER
 	lspConfig('rust_analyzer', {
 		settings = {
