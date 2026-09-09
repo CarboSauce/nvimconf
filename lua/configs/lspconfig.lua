@@ -15,33 +15,21 @@ function setupLspConfigs()
 		update_in_insert = false,
 		severity_sort = false
 	}
-	-- CCLS CONFIG
-	local root_files = {
-		'.clang-format',
-		'CMakeLists.txt',
-		'Makefile',
-		'.cmakebuild/compile_commands.json',
-		'.clangd',
-	}
-	function cxx_root_dir()
-		return util.root_pattern(unpack(root_files))(vim.fn.getcwd())
-	end
 	
 	-- if vim.g.use_clangd then
 	lspConfig('clangd', {
 		cmd = {
 			"clangd",
-			"--compile-commands-dir=./build",
 			"--completion-style=detailed",
 			"--header-insertion=never",
 			"--header-insertion-decorators",
 			"--all-scopes-completion",
 			"--background-index", "--clang-tidy",
-			"--enable-config"
+			"--enable-config", "--experimental-modules-support"
 		},
-		root_dir = cxx_root_dir
 	})
     vim.lsp.enable('mesonlsp')
+    vim.lsp.enable('neocmake')
 	-- RUST ANALYZER
 	lspConfig('rust_analyzer', {
 		settings = {
@@ -87,13 +75,6 @@ function setupLspConfigs()
 			},
 		}
 	})
-	
-	lspConfig('cmake', {
-		init_options = {
-			buildDirectory = '.cmakebuild'
-		}
-	})
-
 	
 end
 

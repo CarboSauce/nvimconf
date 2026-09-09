@@ -171,6 +171,9 @@ require("lazy").setup({
             auto_close_terminal = false,
             compile_before_run = false
         }
+    },
+    {
+        'Civitasv/cmake-tools.nvim', opts = {}
     }
 },
 {
