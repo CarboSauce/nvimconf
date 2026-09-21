@@ -19,12 +19,6 @@ require("lazy").setup({
     { 'RRethy/nvim-base16' },
     { 'LunarVim/horizon.nvim' },
     -- plugins
-    {
-        "nvim-telescope/telescope-file-browser.nvim",
-        config = function ()
-            require 'telescope'.load_extension 'file_browser'
-        end
-    },
     'famiu/bufdelete.nvim',
     {
         'stevearc/dressing.nvim',
@@ -48,16 +42,6 @@ require("lazy").setup({
         opts = {
             use_default_keymaps = false,
             max_join_length = 150
-        }
-    },
-    'mfussenegger/nvim-dap',
-    {
-        'igorlfs/nvim-dap-view',
-        lazy = true,
-        cmd = {
-            'DapViewOpen',
-            'DapViewClose',
-            'DapViewToggle'
         }
     },
     {
@@ -98,16 +82,6 @@ require("lazy").setup({
             open_mapping = '<c-t>',
             direction = 'float',
             persist_mode = false -- start always in insert mode
-        }
-    },
-    {
-        'akinsho/bufferline.nvim',
-        version = '*',
-        dependencies = { 'nvim-tree/nvim-web-devicons' },
-        opts = {
-            options = {
-                mode = 'tabs'
-            }
         }
     },
     {
@@ -181,7 +155,25 @@ require("lazy").setup({
     },
     {
         'Civitasv/cmake-tools.nvim',
-        opts = {}
+        opts = {
+            cmake_build_options = {
+                '--parallel',
+                '--verbose'
+            },
+            cmake_generate_options = {
+                '-DCMAKE_GENERATOR=Ninja',
+                '-DCMAKE_EXPORT_COMPILE_COMMANDS=1'
+            },
+            cmake_build_directory = "build/${kit}/${kitGenerator}/${variant:buildType}",
+            cmake_dap_configuration = {
+                name = 'cpp',
+                type = 'gdb',
+                request = 'launch',
+                stopOnEntry = false,
+                runInTerminal = true,
+                console = 'integratedTerminal'
+            }
+        }
     }
 },
     {

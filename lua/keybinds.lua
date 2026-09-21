@@ -9,10 +9,9 @@ vim.api.nvim_create_user_command('Codeaction', function () vim.lsp.buf.code_acti
 vim.api.nvim_create_user_command('Diag', function () vim.diagnostic.open_float() end, { nargs = 0 })
 
 vim.keymap.set('n', '<leader>qf', function () require('trouble').toggle() end, { desc = 'Quick fix' })
+vim.keymap.set('n', '<F12>', function () vim.lsp.buf.definition() end, { desc = 'Go to implementation' })
 
-vim.keymap.set(
-    'n', '<leader>tf', '<cmd>Telescope file_browser<CR>', { noremap = true, desc = 'Telescope file browser' }
-)
+vim.keymap.set('n', '<leader>f', '<cmd>Telescope find_files<CR>', { noremap = true, desc = 'Telescope find files' })
 
 vim.keymap.set('n', '<leader>db', function () require 'dap'.toggle_breakpoint() end, { desc = 'DAP Toggle breakpoint' })
 vim.keymap.set('n', '<leader>dso', function () require 'dap'.step_over() end, { desc = 'DAP Step over' })
