@@ -32,7 +32,7 @@ function setupLspConfigs()
     })
     vim.lsp.enable('mesonlsp')
     vim.lsp.enable('neocmake')
-    -- RUST ANALYZER
+    -- RUST
     lspConfig('rust_analyzer', {
         settings = {
             ["rust-analyzer"] = {
@@ -57,6 +57,10 @@ function setupLspConfigs()
     -- TYPESCRIPT
     lspConfig('ts_ls', {})
 
+    -- PYTHON
+    vim.lsp.enable('zuban')
+
+    -- LUA
     lspConfig('emmylua_ls', {
         cmd = { 'emmylua_ls' },
         filetypes = { 'lua' },
