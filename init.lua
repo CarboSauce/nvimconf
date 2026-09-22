@@ -2,6 +2,7 @@ if vim.g.vscode then
     return
 end
 
+vim.g.loaded_nvim_dir_plugin = false
 vim.o.listchars = "tab:▸\\ ,extends:❯,precedes:❮,nbsp:␣"
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4
@@ -43,25 +44,24 @@ vim.keymap.set('n', '<leader>P', '"+P')
 vim.keymap.set('n', '<S-h>', ':bp<CR>', { silent = true })
 vim.keymap.set('n', '<S-l>', ':bn<CR>', { silent = true })
 
-vim.keymap.set('n', '<leader>e', ':NvimTreeToggle<CR>', { silent = true })
 vim.keymap.set('t', '<Esc>', '<C-\\><C-n>')
 
 require('init')
 
-vim.cmd("colorscheme xcodedarkhc")
+vim.cmd("colorscheme cyberdream")
 
 vim.cmd("highlight Cursor guifg=none guibg=pink")
 vim.cmd("highlight iCursor guifg=none guibg=#99bbff")
 if vim.g.neovide then
     vim.g.neovide_scroll_animation_length = 0.05
 else
-    vim.cmd("highlight Normal guibg=none ctermbg=none")
-    vim.cmd("highlight NormalNc guibg=none ctermbg=none")
-    vim.cmd("highlight LineNr guibg=none ctermbg=none")
-    vim.cmd("highlight SignColumn guibg=none ctermbg=none")
-    vim.cmd("highlight! StatusColumn guibg=none ctermbg=none")
-    vim.cmd("highlight! StatusLine guibg=none ctermbg=none")
-    vim.cmd("highlight! TabLine guibg=none ctermbg=none")
-    vim.cmd("highlight! TabLineFill guibg=none ctermbg=none")
-    vim.cmd("highlight! EndOfBuffer guibg=none ctermbg=none")
+    -- vim.cmd("highlight Normal guibg=none ctermbg=none")
+    -- vim.cmd("highlight NormalNc guibg=none ctermbg=none")
+    -- vim.cmd("highlight LineNr guibg=none ctermbg=none")
+    -- vim.cmd("highlight SignColumn guibg=none ctermbg=none")
+    -- vim.cmd("highlight! StatusColumn guibg=none ctermbg=none")
+    -- vim.cmd("highlight! StatusLine guibg=none ctermbg=none")
+    -- vim.cmd("highlight! TabLine guibg=none ctermbg=none")
+    -- vim.cmd("highlight! TabLineFill guibg=none ctermbg=none")
+    -- vim.cmd("highlight! EndOfBuffer guibg=none ctermbg=none")
 end
