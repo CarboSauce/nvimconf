@@ -123,9 +123,11 @@ require("lazy").setup({
                     '--parallel',
                     '--verbose'
                 },
+                cmake_regenerate_on_save = false,
                 cmake_generate_options = {
-                    '-DCMAKE_GENERATOR=Ninja',
-                    '-DCMAKE_EXPORT_COMPILE_COMMANDS=1'
+                    '-DCMAKE_EXPORT_COMPILE_COMMANDS=1',
+                    '-DCPM_SOURCE_CACHE=' .. vim.fn.expand('~/.cache/cpm/'),
+                    '-DCPM_DOWNLOAD_LOCATION=' .. vim.fn.expand('~/.local/share/cpm')
                 },
                 cmake_build_directory = "build/${kit}/${kitGenerator}/${variant:buildType}",
                 cmake_dap_configuration = {
@@ -135,6 +137,13 @@ require("lazy").setup({
                     stopOnEntry = false,
                     runInTerminal = true,
                     console = 'integratedTerminal'
+                },
+                cmake_executor = {
+                    default_opts = {
+                        quickfix = {
+                            auto_close_when_success = false
+                        }
+                    }
                 }
             }
         }
