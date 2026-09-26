@@ -118,6 +118,8 @@ require("lazy").setup({
         },
         {
             'Civitasv/cmake-tools.nvim',
+            lazy = true,
+            ft = { 'cpp', 'c', 'cmake' },
             opts = {
                 cmake_build_options = {
                     '--parallel',

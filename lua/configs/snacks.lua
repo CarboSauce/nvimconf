@@ -7,7 +7,24 @@ return {
     },
     opts = {
         picker = {
-            enabled = true
+            enabled = true,
+            sources = {
+                explorer = {
+                    win = {
+                        list = {
+                            keys = {
+                                ["A"] = "explorer_add_dotnet"
+                            }
+                        }
+                    },
+                    actions = {
+                        explorer_add_dotnet = function (picker)
+                            local dir = picker:dir()
+                            require 'easy-dotnet'.create_item(dir)
+                        end
+                    }
+                }
+            }
         },
         terminal = {
             enabled = true

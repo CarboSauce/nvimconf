@@ -1,9 +1,6 @@
 return {
     {
         'mfussenegger/nvim-dap',
-        dependencies = {
-            'Civitasv/cmake-tools.nvim'
-        },
         config = function ()
             local dap = require 'dap'
 

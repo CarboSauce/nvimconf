@@ -6,14 +6,18 @@ function map(mode, key, func, config)
 end
 -- General configs
 create_command('Fmt', function () require 'conform'.format({ lsp_format = 'fallback' }) end)
-create_command('Impl', function () vim.lsp.buf.definition() end)
+create_command('Impl', function () vim.lsp.buf.implementation() end)
+create_command('Def', function () vim.lsp.buf.definition() end)
 create_command('Rename', function () vim.lsp.buf.rename() end)
 create_command('Hover', function () vim.lsp.buf.hover() end)
 create_command('Codeaction', function () vim.lsp.buf.code_action() end)
 create_command('Diag', function () vim.diagnostic.open_float() end)
 
-map('n', '<leader>qf', function () require('trouble').toggle() end, { desc = 'Quick fix' })
+map('n', '<leader>cd', "<cmd>Trouble diagnostics toggle<cr>", { desc = 'Quick fix' })
 map('n', '<F12>', function () vim.lsp.buf.definition() end, { desc = 'Go to implementation' })
+map('n', '<leader>ci', function () vim.lsp.buf.implementation() end, { desc = 'Go to implementation' })
+map('n', '<leader>ca', function () vim.lsp.buf.code_action() end, { desc = 'Code action' })
+map('n', '<leader>ca', function () require 'conform'.format({ lsp_format = 'fallback' }) end, { desc = 'Format file' })
 
 map('n', '<leader>f', function () require 'snacks'.picker.smart() end, { noremap = true, desc = 'Find files' })
 map({ 'n', 't' }, '<C-t>', function () require 'snacks'.terminal.toggle() end, { desc = 'Toggle terminal' })
