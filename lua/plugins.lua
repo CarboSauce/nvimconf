@@ -26,7 +26,7 @@ require("lazy").setup({
             priority = 1000,
             opts = {
                 variant = 'muted',
-                transparent = true
+                transparent = not vim.g.neovide
             }
         },
         {

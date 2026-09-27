@@ -26,7 +26,6 @@
   "oxocarbon.nvim": { "branch": "main", "commit": "cd6523a0836d6e8ee823d343149fd06c7b71fdde" },
   "plenary.nvim": { "branch": "master", "commit": "74b06c6c75e4eeb3108ec01852001636d85a932b" },
   "snacks.nvim": { "branch": "main", "commit": "882c996cf28183f4d63640de0b4c02ec886d01f2" },
-  "telescope.nvim": { "branch": "master", "commit": "40aedd8a68c78a656a10a8d62d80c54af59420fb" },
   "treesj": { "branch": "main", "commit": "79aedb401bbdc7e4202f7881eab5f6feb2105b0a" },
   "trouble.nvim": { "branch": "main", "commit": "bd67efe408d4816e25e8491cc5ad4088e708a69a" },
   "vim-colors-xcode": { "branch": "master", "commit": "2329a3ed092b4f72e9361a94567a5431e36e7d9c" }
