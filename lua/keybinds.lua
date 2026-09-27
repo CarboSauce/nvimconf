@@ -19,9 +19,7 @@ map('n', '<leader>ci', function () vim.lsp.buf.implementation() end, { desc = 'G
 map('n', '<leader>ca', function () vim.lsp.buf.code_action() end, { desc = 'Code action' })
 map('n', '<leader>cf', function () require 'conform'.format({ lsp_format = 'fallback' }) end, { desc = 'Format file' })
 
-map('n', '<leader>s', function () require 'snacks'.picker() end, { noremap = true, desc = 'Find files' })
 map('n', '<leader>f', function () require 'snacks'.picker.smart() end, { noremap = true, desc = 'Find files' })
-map({ 'n', 't' }, '<C-t>', function () require 'snacks'.terminal.toggle() end, { desc = 'Toggle terminal' })
 map('n', '<leader>e', function () require 'snacks'.explorer() end, { desc = 'Open explorer' })
 
 map('n', '<leader>db', function () require 'dap'.toggle_breakpoint() end, { desc = 'DAP Toggle breakpoint' })

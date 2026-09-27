@@ -26,7 +26,7 @@ require("lazy").setup({
             priority = 1000,
             opts = {
                 variant = 'muted',
-                transparent = not vim.g.neovide
+                transparent = true
             }
         },
         {
@@ -146,7 +146,22 @@ require("lazy").setup({
                             auto_close_when_success = false
                         }
                     }
+                },
+                cmake_runner = {
+                    name = "toggleterm"
                 }
+            }
+        },
+        {
+            'akinsho/toggleterm.nvim',
+            version = '*',
+            opts = {
+                float_opts = {
+                    border = { "╔", "═", "╗", "║", "╝", "═", "╚", "║" }
+                },
+                open_mapping = '<c-t>',
+                direction = 'float',
+                persist_mode = false -- start always in insert mode
             }
         }
     },

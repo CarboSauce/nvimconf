@@ -26,9 +26,6 @@ return {
                 }
             }
         },
-        terminal = {
-            enabled = true
-        },
         bufdelete = {
             enabled = true
         },
