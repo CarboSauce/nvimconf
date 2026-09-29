@@ -60,6 +60,9 @@ function setupLspConfigs()
     -- PYTHON
     vim.lsp.enable('zuban')
 
+    -- Typst
+    vim.lsp.enable('tinymist')
+
     -- LUA
     lspConfig('emmylua_ls', {
         cmd = { 'emmylua_ls' },
