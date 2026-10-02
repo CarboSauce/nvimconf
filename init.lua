@@ -2,6 +2,12 @@ if vim.g.vscode then
     return
 end
 
+if vim.fn.has('win32') == 1 then
+    if vim.fn.executable('nu') == 1 then
+        vim.o.shell = 'nu'
+    end
+end
+
 vim.g.loaded_nvim_dir_plugin = false
 vim.o.listchars = "tab:▸\\ ,extends:❯,precedes:❮,nbsp:␣"
 vim.o.tabstop = 4
