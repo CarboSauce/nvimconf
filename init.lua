@@ -4,7 +4,10 @@ end
 
 if vim.fn.has('win32') == 1 then
     if vim.fn.executable('nu') == 1 then
-        vim.o.shell = 'nu'
+        vim.o.shell = 'nu.exe'
+        vim.o.shellcmdflag = '-c'
+        vim.o.shellquote = ''
+        vim.o.shellxquote = ''
     end
 end
 
